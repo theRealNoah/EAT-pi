@@ -5,6 +5,7 @@ import smbus2
 # This is the humidy/temperature sensor.
 sht = SHT20(1, 0x40)
 
+# To-Do add in another condition for while loop...
 while True:
     
     data = sht.all()
