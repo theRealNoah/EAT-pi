@@ -5,11 +5,9 @@ import RPi.GPIO as GPIO
 from datetime import datetime
     
 # This is the humidy/temperature sensor.
-
 sht = SHT20(1, 0x40)
 
 # Set input pins for root zone moisture sensor and LED.
-
 GPIO.setmode(GPIO.BCM)
 sen0308 = 17
 GPIO.setup(sen0308,GPIO.IN)
@@ -17,10 +15,14 @@ growLights = 27
 GPIO.setup(growLights,GPIO.OUT)
 
 # Set input pins for Step Motor 28BYJ-48.
-StepPins = [23,24,5,6]
-for pin in StepPins:
+StepXPins = [23,24,5,6]
+StepYPins = [22,25,16,13]
+for pin in StepXPins:
     GPIO.setup(pin,GPIO.OUT)
-    GPIO.output(pin,False)
+    GPIO.output(pin, False)
+for pin in StepYPins:
+    GPIO.setup(pin,GPIO.OUT)
+    GPIO.output(pin, False)
 
 # Create file for data logging.
 file = open('eatLog.txt','w+') 
@@ -56,12 +58,15 @@ def pumpwater():
      #print(Seq[StepCounter])
  
      for pin in range(0, 4):
-         xpin = StepPins[pin]#
+         xpin = StepXPins[pin]#
+	 ypin = StepYPins[pin]#
          if Seq[StepCounter][pin]!=0:
              #print(" Enable GPIO %i" %(xpin))
              GPIO.output(xpin, True)
+	     GPIO.output(ypin, True)
          else:
              GPIO.output(xpin, False)
+	     GPIO.output(ypin, False)
      StepCounter += StepDir
  
      # If we reach the end of the sequence, start again.
