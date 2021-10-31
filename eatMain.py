@@ -53,33 +53,33 @@ def pumpwater():
     global SeqCounter, StepCounter, Revs
     while SeqCounter < 511*Revs: # Number of sequences required for one revolution.
  
-     #print(StepCounter)
-     #print(SeqCounter)
-     #print(Seq[StepCounter])
+    #print(StepCounter)
+    #print(SeqCounter)
+    #print(Seq[StepCounter])
  
-     for pin in range(0, 4):
-         xpin = StepXPins[pin]#
-	 ypin = StepYPins[pin]#
-         if Seq[StepCounter][pin]!=0:
-             #print(" Enable GPIO %i" %(xpin))
-             GPIO.output(xpin, True)
-	     GPIO.output(ypin, True)
-         else:
-             GPIO.output(xpin, False)
-	     GPIO.output(ypin, False)
-     StepCounter += StepDir
+        for pin in range(0, 4):
+            xpin = StepXPins[pin]
+	    ypin = StepYPins[pin]
+            if Seq[StepCounter][pin]!=0:
+            #print(" Enable GPIO %i" %(xpin))
+                GPIO.output(xpin, True)
+	        GPIO.output(ypin, True)
+            else:
+                GPIO.output(xpin, False)
+	        GPIO.output(ypin, False)
+        StepCounter += StepDir
  
-     # If we reach the end of the sequence, start again.
-     if (StepCounter >= StepCount):
-         StepCounter = 0
-         SeqCounter += 1
-     if (StepCounter < 0):
-         StepCounter = StepCount+StepDir
-         SeqCounter += 1
+    # If we reach the end of the sequence, start again.
+        if (StepCounter >= StepCount):
+            StepCounter = 0
+            SeqCounter += 1
+        if (StepCounter < 0):
+            StepCounter = StepCount+StepDir
+            SeqCounter += 1
  
-     # Wait before moving on
-     time.sleep(WaitTime)
-  
+    # Wait before moving on
+        time.sleep(WaitTime)
+
 # Create a function to check plant moisture.
 def checkmoisture(sen0308):
     global SeqCounter, StepCounter, Revs
@@ -88,7 +88,6 @@ def checkmoisture(sen0308):
         pumpwater()
         SeqCounter = 0
         
-
 # Return moisture level to terminal.
 GPIO.add_event_detect(sen0308, GPIO.BOTH, bouncetime=300)
 GPIO.add_event_callback(sen0308, checkmoisture)
