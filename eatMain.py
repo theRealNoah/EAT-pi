@@ -45,7 +45,7 @@ StepDir = 2 # Set to 1 or 2 for clockwise
 # Initialise variables
 StepCounter = 0
 SeqCounter = 0
-Revs = 1 # Edit the revolutions needed to deliver water.
+Revs = 16 # Edit the revolutions needed to deliver water.
 WaitTime = 3/float(1000)
 
 # Create a function to actuate motor.
@@ -54,7 +54,7 @@ def pumpwater():
     while SeqCounter < 511*Revs: # Number of sequences required for one revolution.
         for pin in range(0, 4):
             xpin = StepXPins[pin]
-            ypin = StepYPins[pin]
+            ypin = StepYPins[-pin]
             if Seq[StepCounter][pin]!=0:
                 GPIO.output(xpin, True)
                 GPIO.output(ypin, True)
