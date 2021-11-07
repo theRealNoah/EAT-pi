@@ -1,7 +1,6 @@
 from sensor import SHT20
 from time import sleep
 import RPi.GPIO as GPIO
-from pathlib import Path
 from datetime import datetime
     
 # This is the humidy/temperature sensor.
