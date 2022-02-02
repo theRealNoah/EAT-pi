@@ -52,21 +52,15 @@ WaitTime = 3/float(1000)
 def pumpwater():
     global SeqCounter, StepCounter, Revs
     while SeqCounter < 511*Revs: # Number of sequences required for one revolution.
- 
-    #print(StepCounter)
-    #print(SeqCounter)
-    #print(Seq[StepCounter])
- 
         for pin in range(0, 4):
             xpin = StepXPins[pin]
-	    ypin = StepYPins[pin]
+            ypin = StepYPins[pin]
             if Seq[StepCounter][pin]!=0:
-            #print(" Enable GPIO %i" %(xpin))
                 GPIO.output(xpin, True)
-	        GPIO.output(ypin, True)
+                GPIO.output(ypin, True)
             else:
                 GPIO.output(xpin, False)
-	        GPIO.output(ypin, False)
+                GPIO.output(ypin, False)
         StepCounter += StepDir
  
     # If we reach the end of the sequence, start again.
