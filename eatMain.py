@@ -25,8 +25,7 @@ for pin in StepYPins:
     GPIO.output(pin, False)
 
 # Create file for data logging.
-file = open('eatLog.txt','w+') 
-date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
+file = open('eatLog.txt','w+')
 
 # Define advanced sequence as shown in manufacturers datasheet.
 Seq = [[1,0,0,1],
@@ -92,6 +91,7 @@ try:
     while True:
         GPIO.output(growLights,GPIO.HIGH)
         with open('eatLog.txt', "a") as log:
+            date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
             data = sht.all()
             humid = data[0]
             temp = data[1]
