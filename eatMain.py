@@ -5,22 +5,25 @@ import RPi.GPIO as GPIO
 from datetime import datetime
     
 # This is the humidy/temperature sensor.
-sht = SHT20(1, 0x40)
+sen0227 = SHT20(1, 0x40)
+
+# This is the oxygen sensor.
+sen0322 = (1, 0x73)
 
 # Set input pins for root zone moisture sensor and LED.
 GPIO.setmode(GPIO.BCM)
-sen0308 = 17
+sen0308 = 18
 GPIO.setup(sen0308,GPIO.IN)
-growLights = 27
+growLights = 26
 GPIO.setup(growLights,GPIO.OUT)
 
 # Set input pins for Step Motor 28BYJ-48.
-StepXPins = [23,24,5,6]
-StepYPins = [22,25,16,13]
-for pin in StepXPins:
+stepXPins = [5,6,13,19]
+stepYPins = [27,22,23,24]
+for pin in stepXPins:
     GPIO.setup(pin,GPIO.OUT)
     GPIO.output(pin, False)
-for pin in StepYPins:
+for pin in stepYPins:
     GPIO.setup(pin,GPIO.OUT)
     GPIO.output(pin, False)
 
@@ -92,11 +95,11 @@ try:
         GPIO.output(growLights,GPIO.HIGH)
         with open('eatLog.txt', "a") as log:
             date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
-            data = sht.all()
+            data = sen0227.all()
             humid = data[0]
             temp = data[1]
             checkmoisture(sen0308)
-            out = "\n" + date + "\n" + str(temp) + "\n" + str(humid) + "\n"
+            out = sen0322 + "\n" + date + "\n" + str(temp) + "\n" + str(humid) + "\n"
             log.write(out)
         print(out)
         time.sleep(5)
