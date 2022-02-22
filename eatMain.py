@@ -55,8 +55,8 @@ def pumpwater():
     global SeqCounter, StepCounter, Revs
     while SeqCounter < 511*Revs: # Number of sequences required for one revolution.
         for pin in range(0, 4):
-            xpin = StepXPins[pin]
-            ypin = StepYPins[-pin]
+            xpin = stepXPins[pin]
+            ypin = stepYPins[-pin]
             if Seq[StepCounter][pin]!=0:
                 GPIO.output(xpin, True)
                 GPIO.output(ypin, True)
