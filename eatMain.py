@@ -10,7 +10,7 @@ sen0227 = SHT20(1, 0x40)
 # This is the oxygen sensor.
 sen0322 = (1, 0x73)
 
-# Set input pins for root zone moisture sensor and LED.
+# Set input pins for capacitive moisture sensor and LED strip.
 GPIO.setmode(GPIO.BCM)
 sen0308 = 18
 GPIO.setup(sen0308,GPIO.IN)
@@ -31,7 +31,7 @@ for pin in stepYPins:
 file = open('eatLog.txt','w+')
 
 # Define advanced sequence as shown in manufacturers datasheet.
-Seq = [[1,0,0,1],
+seq = [[1,0,0,1],
        [1,0,0,0],
        [1,1,0,0],
        [0,1,0,0],
@@ -40,49 +40,52 @@ Seq = [[1,0,0,1],
        [0,0,1,1],
        [0,0,0,1]]
  
-StepCount = len(Seq)
-StepDir = 2 # Set to 1 or 2 for clockwise
+stepCount = len(seq)
+stepDir = 2 # Set to 1 or 2 for clockwise
             # Set to -1 or -2 for counter-clockwise
  
 # Initialise variables
-StepCounter = 0
-SeqCounter = 0
-Revs = 16 # Edit the revolutions needed to deliver water.
-WaitTime = 3/float(1000)
+stepCounter = 0
+seqCounter = 0
+revs = 1 # Edit the revolutions needed to deliver water.
+waitTime = 3/float(1000)
 
 # Create a function to actuate motor.
 def pumpwater():
-    global SeqCounter, StepCounter, Revs
-    while SeqCounter < 511*Revs: # Number of sequences required for one revolution.
+    global seqCounter, stepCounter, revs
+    while seqCounter < 511*revs: # Number of sequences required for one revolution.
         for pin in range(0, 4):
             xpin = stepXPins[pin]
             ypin = stepYPins[-pin]
-            if Seq[StepCounter][pin]!=0:
+            if seq[stepCounter][pin]!=0:
                 GPIO.output(xpin, True)
                 GPIO.output(ypin, True)
             else:
                 GPIO.output(xpin, False)
                 GPIO.output(ypin, False)
-        StepCounter += StepDir
+        stepCounter += stepDir
  
-    # If we reach the end of the sequence, start again.
-        if (StepCounter >= StepCount):
-            StepCounter = 0
-            SeqCounter += 1
-        if (StepCounter < 0):
-            StepCounter = StepCount+StepDir
-            SeqCounter += 1
+    # When we reach the end of the sequence, start again.
+        if (stepCounter >= stepCount):
+            stepCounter = 0
+            seqCounter += 1
+        if (stepCounter < 0):
+            stepCounter = stepCount+stepDir
+            seqCounter += 1
  
-    # Wait before moving on
-        time.sleep(WaitTime)
+    # Wait before moving on.
+        time.sleep(waitTime)
 
 # Create a function to check plant moisture.
 def checkmoisture(sen0308):
-    global SeqCounter, StepCounter, Revs
+    global seqCounter, stepCounter, revs
     if GPIO.input(sen0308):
         print("\nPlant is thirsty, now watering!")
         pumpwater()
-        SeqCounter = 0
+        seqCounter = 0
+
+def imageCapture(date):
+    libcamera-still -o (date + '.jpg')
         
 # Return moisture level to terminal.
 GPIO.add_event_detect(sen0308, GPIO.BOTH, bouncetime=300)
@@ -93,13 +96,14 @@ try:
 
     while True:
         GPIO.output(growLights,GPIO.HIGH)
+        date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
+        data = sen0227.all()
+        humid = data[0]
+        temp = data[1]
+        captureImage(date)
         with open('eatLog.txt', "a") as log:
-            date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
-            data = sen0227.all()
-            humid = data[0]
-            temp = data[1]
             checkmoisture(sen0308)
-            out = sen0322 + "\n" + date + "\n" + str(temp) + "\n" + str(humid) + "\n"
+            out = "\n" + date + "\n" + str(temp) + "\n" + str(humid) + "\n"
             log.write(out)
         print(out)
         time.sleep(5)
