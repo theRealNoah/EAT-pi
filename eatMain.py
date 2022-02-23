@@ -84,7 +84,7 @@ def checkmoisture(sen0308):
         pumpwater()
         seqCounter = 0
 
-def imageCapture(date):
+def captureImage(date):
     libcamera-still -o (date + '.jpg')
         
 # Return moisture level to terminal.
