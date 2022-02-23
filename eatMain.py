@@ -1,4 +1,4 @@
-import sys
+import subprocess
 import time
 from sensor import SHT20
 import RPi.GPIO as GPIO
@@ -85,7 +85,7 @@ def checkmoisture(sen0308):
         seqCounter = 0
 
 def captureImage(date):
-    libcamera-still -o (date + '.jpg')
+    subprocess.run(["libcamera-jpeg", "-o", date + ".jpeg"])
         
 # Return moisture level to terminal.
 GPIO.add_event_detect(sen0308, GPIO.BOTH, bouncetime=300)
@@ -93,7 +93,6 @@ GPIO.add_event_callback(sen0308, checkmoisture)
 
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
 try:
-
     while True:
         GPIO.output(growLights,GPIO.HIGH)
         date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
