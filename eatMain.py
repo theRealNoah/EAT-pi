@@ -95,6 +95,7 @@ GPIO.add_event_callback(sen0308, checkmoisture)
 try:
     while True:
         GPIO.output(growLights,GPIO.HIGH)
+        subprocess.run(["sudo", "service", "htpdate", "force-reload"])
         date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
         data = sen0227.all()
         humid = data[0]
