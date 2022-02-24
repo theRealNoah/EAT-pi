@@ -27,9 +27,6 @@ for pin in stepYPins:
     GPIO.setup(pin,GPIO.OUT)
     GPIO.output(pin, False)
 
-# Create file for data logging.
-file = open('eatLog.txt','w+')
-
 # Define advanced sequence as shown in manufacturers datasheet.
 seq = [[1,0,0,1],
        [1,0,0,0],
@@ -51,7 +48,7 @@ revs = 1 # Edit the revolutions needed to deliver water.
 waitTime = 3/float(1000)
 
 # Create a function to actuate motor.
-def pumpwater():
+def pumpWater():
     global seqCounter, stepCounter, revs
     while seqCounter < 511*revs: # Number of sequences required for one revolution.
         for pin in range(0, 4):
@@ -77,32 +74,39 @@ def pumpwater():
         time.sleep(waitTime)
 
 # Create a function to check plant moisture.
-def checkmoisture(sen0308):
+def checkMoisture(sen0308):
     global seqCounter, stepCounter, revs
     if GPIO.input(sen0308):
         print("\nPlant is thirsty, now watering!")
-        pumpwater()
+        pumpWater()
         seqCounter = 0
 
 def captureImage(date):
-    subprocess.run(["libcamera-jpeg", "-o", date + ".jpeg"])
+    # Insert logic to create directory for image storage.
+    # Navigate to directory.
+    print("\nSay cheese!")
+    subprocess.run(["libcamera-jpeg", "-o", date + ".jpeg"]) # Capture image.
+    # Return to EAT-pi directory.
         
 # Return moisture level to terminal.
 GPIO.add_event_detect(sen0308, GPIO.BOTH, bouncetime=300)
-GPIO.add_event_callback(sen0308, checkmoisture)
+GPIO.add_event_callback(sen0308, checkMoisture)
+
+# Create file for data logging.
+file = open('eatLog.txt','w+')
 
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
 try:
     while True:
         GPIO.output(growLights,GPIO.HIGH)
-        subprocess.run(["sudo", "service", "htpdate", "force-reload"])
+        subprocess.run(["sudo", "service", "htpdate", "force-reload"]) # Force time synchronization.
         date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
         data = sen0227.all()
         humid = data[0]
         temp = data[1]
         captureImage(date)
         with open('eatLog.txt', "a") as log:
-            checkmoisture(sen0308)
+            checkMoisture(sen0308)
             out = "\n" + date + "\n" + str(temp) + "\n" + str(humid) + "\n"
             log.write(out)
         print(out)
