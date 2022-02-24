@@ -1,3 +1,4 @@
+import os
 import subprocess
 import time
 from sensor import SHT20
@@ -27,7 +28,7 @@ for pin in stepYPins:
     GPIO.setup(pin,GPIO.OUT)
     GPIO.output(pin, False)
 
-# Define advanced sequence as shown in manufacturers datasheet.
+# Define sequence as shown in manufacturers data sheet.
 seq = [[1,0,0,1],
        [1,0,0,0],
        [1,1,0,0],
@@ -38,19 +39,15 @@ seq = [[1,0,0,1],
        [0,0,0,1]]
  
 stepCount = len(seq)
-stepDir = 2 # Set to 1 or 2 for clockwise
-            # Set to -1 or -2 for counter-clockwise
- 
-# Initialise variables
+stepDir = 2  # Set to 1 or 2 for clockwise, negative for counter-clockwise.
 stepCounter = 0
 seqCounter = 0
-revs = 1 # Edit the revolutions needed to deliver water.
-waitTime = 3/float(1000)
+revs = 1  # Edit the revolutions needed to deliver water.
 
-# Create a function to actuate motor.
+# Function to actuate dual motor peristaltic pump.
 def pumpWater():
     global seqCounter, stepCounter, revs
-    while seqCounter < 511*revs: # Number of sequences required for one revolution.
+    while seqCounter < 511*revs:  # Number of sequences required for one revolution.
         for pin in range(0, 4):
             xpin = stepXPins[pin]
             ypin = stepYPins[-pin]
@@ -63,30 +60,36 @@ def pumpWater():
         stepCounter += stepDir
  
     # When we reach the end of the sequence, start again.
-        if (stepCounter >= stepCount):
+        if stepCounter >= stepCount:
             stepCounter = 0
             seqCounter += 1
-        if (stepCounter < 0):
+        if stepCounter < 0:
             stepCounter = stepCount+stepDir
             seqCounter += 1
- 
-    # Wait before moving on.
-        time.sleep(waitTime)
+        time.sleep(3/float(1000))  # Pause before next sequence.
 
-# Create a function to check plant moisture.
+# Function to check Little Gem root zone moisture.
 def checkMoisture(sen0308):
     global seqCounter, stepCounter, revs
     if GPIO.input(sen0308):
-        print("\nPlant is thirsty, now watering!")
+        print("\nLittle Gem is thirsty, now watering!")
         pumpWater()
         seqCounter = 0
 
+# Function to check Little Gem root zone oxygen.
+def checkOxygen():
+    print("No oxygen, help!")
+
+# Function to capture image using Raspberry Pi Camera.
 def captureImage(date):
-    # Insert logic to create directory for image storage.
-    # Navigate to directory.
-    print("\nSay cheese!")
-    subprocess.run(["libcamera-jpeg", "-o", date + ".jpeg"]) # Capture image.
-    # Return to EAT-pi directory.
+    # Create directory for image storage.
+    pwd = os.getcwd()
+    if not os.path.exists(pwd + '/Images'):
+        os.mkdir(pwd + '/Images')
+    os.chdir(pwd + '/Images')
+    print("\nSay cheese Little Gem!")
+    subprocess.run(["libcamera-jpeg", "-o", date + ".jpeg"])  # Capture image.
+    os.chdir('..')  # Return to EAT-pi directory.
         
 # Return moisture level to terminal.
 GPIO.add_event_detect(sen0308, GPIO.BOTH, bouncetime=300)
@@ -107,6 +110,7 @@ try:
         captureImage(date)
         with open('eatLog.txt', "a") as log:
             checkMoisture(sen0308)
+            checkOxygen()
             out = "\n" + date + "\n" + str(temp) + "\n" + str(humid) + "\n"
             log.write(out)
         print(out)
