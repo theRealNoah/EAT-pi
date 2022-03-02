@@ -96,18 +96,18 @@ GPIO.add_event_detect(sen0308, GPIO.BOTH, bouncetime=300)
 GPIO.add_event_callback(sen0308, checkMoisture)
 
 # Create file for data logging.
-file = open('eatLog.txt','w+')
+file = open('eatLog.txt', 'w+')
 
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
 try:
     while True:
-        GPIO.output(growLights,GPIO.HIGH)
-        subprocess.run(["sudo", "service", "htpdate", "force-reload"]) # Force time synchronization.
+        GPIO.output(growLights, GPIO.HIGH)
+        #subprocess.run(["sudo", "service", "htpdate", "force-reload"])  # Force time synchronization.
         date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
         data = sen0227.all()
         humid = data[0]
         temp = data[1]
-        captureImage(date)
+        #captureImage(date)
         with open('eatLog.txt', "a") as log:
             checkMoisture(sen0308)
             checkOxygen()
