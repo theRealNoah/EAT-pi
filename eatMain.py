@@ -9,9 +9,6 @@ from DF_Oxygen import *
 # This is the humidy/temperature sensor.
 sen0227 = SHT20(1, 0x40)
 
-# This is the oxygen sensor.
-sen0322 = (1, 0x73)
-
 # Set input pins for capacitive moisture sensor and LED strip.
 GPIO.setmode(GPIO.BCM)
 sen0308 = 18
@@ -77,40 +74,19 @@ def checkMoisture(sen0308):
         pumpWater()
         seqCounter = 0
 
-def calibrateOxygen():
-    OXYGEN_CONECTRATION = 20.9  # The current concentration of oxygen in the air.
-    OXYGEN_MV = 0  # The value marked on the sensor, Do not use must be assigned to 0.
-    IIC_MODE = 0x01  # default use IIC1
-    '''
-      The first  parameter is to select iic0 or iic1
-      The second parameter is the iic device address
-      The default address for iic is ADDRESS_3
-      ADDRESS_0                 = 0x70
-      ADDRESS_1                 = 0x71
-      ADDRESS_2                 = 0x72
-      ADDRESS_3                 = 0x73 
-    '''
-    oxygen = DFRobot_Oxygen_IIC(IIC_MODE, ADDRESS_3)
-    oxygen.calibrate(OXYGEN_CONECTRATION, OXYGEN_MV)
-    print("oxygen calibrate success")
-    time.sleep(1)
-
-
 # Function to check Little Gem root zone oxygen.
 def checkOxygen():
-    # print("No oxygen, help!")
+    # Code below from manufacturer.
     IIC_MODE = 0x01  # default use IIC1
     COLLECT_NUMBER = 10
     oxygen = DFRobot_Oxygen_IIC(IIC_MODE, ADDRESS_3)
     oxygen_data = oxygen.get_oxygen_data(COLLECT_NUMBER)
-    print("oxygen concentration is %4.2f %%vol" % oxygen_data)
-    time.sleep(1)
+    return oxygen_data
 
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(date):
-    # Create directory for image storage.
     pwd = os.getcwd()
-    if not os.path.exists(pwd + '/Images'):
+    if not os.path.exists(pwd + '/Images'):  # Create directory for image storage.
         os.mkdir(pwd + '/Images')
     os.chdir(pwd + '/Images')
     print("\nSay cheese Little Gem!")
@@ -136,8 +112,8 @@ try:
         #captureImage(date)
         with open('eatLog.txt', "a") as log:
             checkMoisture(sen0308)
-            checkOxygen()
-            out = "\n" + date + "\n" + str(temp) + "\n" + str(humid) + "\n"
+            o2 = checkOxygen()
+            out = ("\n" + date + "\n" + str(temp) + "\n" + str(humid) + "\n" + ("Oxygen Concentration: %4.2f %%vol" % o2))
             log.write(out)
         print(out)
         time.sleep(5)
