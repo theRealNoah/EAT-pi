@@ -5,7 +5,7 @@ from sensor import SHT20
 import RPi.GPIO as GPIO
 from datetime import datetime
 from DF_Oxygen import *
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from gpiozero import CPUTemperature
 
 # Create file for data logging.
@@ -122,7 +122,7 @@ def getOxygen():
 def getCPUTemp():
     # TODO: Pip install gpiozero!
     data = CPUTemperature()
-    return data
+    return data.temperature
 
 
 # Data analysis to determine if the plant needs watering.
@@ -165,8 +165,8 @@ try:
             humidity, temp = getTemperatureAndHumidity()
             cpuTemp = getCPUTemp()
             # Add Raw to the Total List of Raw
-            humidityRaw.append(humidity)
-            temperatureRaw.append(temp)
+            humidityRaw.append(humidity[0])
+            temperatureRaw.append(temp[1])
             oxygenRaw.append(o2)
             cpuTempRaw.append(cpuTemp)
         sampleEndTime = time.perf_counter() - startTime
@@ -204,28 +204,28 @@ try:
 
         # TODO: Data Plotting (Make this into one function and pass in data arrays)
         # Sensor Temperature vs. Elapsed Time
-        plt.figure()
-        plt.title("Sensor Temperature (F) vs. Elapsed Time")
-        plt.subplot(411)
-        plt.plot(elapsedTimes, temperatureSamples)
+        #plt.figure()
+        #plt.title("Sensor Temperature (F) vs. Elapsed Time")
+        #plt.subplot(411)
+        #plt.plot(elapsedTimes, temperatureSamples)
 
         # CPU Temperature vs. Elapsed Time
-        plt.title("CPU Temperature (F) vs. Elapsed Time")
-        plt.subplot(412)
-        plt.plot(elapsedTimes, cpuTempSamples)
+        #plt.title("CPU Temperature (F) vs. Elapsed Time")
+        #plt.subplot(412)
+        #plt.plot(elapsedTimes, cpuTempSamples)
 
         # Relative Humidity vs. Elapsed Time
-        plt.title("Relative Humidity vs. Elapsed Time")
-        plt.subplot(421)
-        plt.plot(elapsedTimes, humiditySamples)
+        #plt.title("Relative Humidity vs. Elapsed Time")
+        #plt.subplot(421)
+        #plt.plot(elapsedTimes, humiditySamples)
 
         # Oxygen vs. Elapsed Time
-        plt.title("Oxygen Level vs. Elapsed Time")
-        plt.subplot(422)
-        plt.plot(elapsedTimes, oxygenRaw)
+        #plt.title("Oxygen Level vs. Elapsed Time")
+        #plt.subplot(422)
+        #plt.plot(elapsedTimes, oxygenRaw)
 
-        plt.show()
-        plt.savefig("plotFileName.png")
+        #plt.show()
+        #plt.savefig("plotFileName.png")
 
         # TODO: Live GUI
 
