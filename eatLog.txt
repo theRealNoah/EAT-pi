@@ -1,1 +1,1 @@
-Time,Temp (F),Humidity,Oxygen,CPU Temp.
+Time,Temp (F),Humidity,Oxygen,CPU Temp

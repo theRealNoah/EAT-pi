@@ -5,7 +5,7 @@ from sensor import SHT20
 import RPi.GPIO as GPIO
 from datetime import datetime
 from DF_Oxygen import *
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from gpiozero import CPUTemperature
 
 # Create file for data logging.
@@ -18,7 +18,8 @@ with open("eatLog.txt", "w+") as newFile:
 # TODO: Check if txt exists, if so read latest elapsed time, if not, create new timer
 
 
-# Set the naming convention for pins to use the numbers after GPIO{}
+# Set the naming convention for pins to use the numbers
+# after GPIO{}
 # e.g. GPIO18
 GPIO.setmode(GPIO.BCM)
 
@@ -104,7 +105,8 @@ def pumpWater():
 # Function to check Little Gem root zone moisture and temperature.
 def getTemperatureAndHumidity():
     data = sen0227.all()
-    # TODO: Check temperature returns and choose either C,F,K
+    # data[0],  is a tuple with ('Humidity', ['RH'])
+    # data[1], is a tuple('Temperature', ['C', 'F', 'K'])
     return data[0], data[1]
 
 
@@ -118,11 +120,12 @@ def getOxygen():
     return oxygen_data
 
 
-# Funcion to return CPU temperature over time.
+# Function to return CPU temperature over time.
 def getCPUTemp():
     # TODO: Pip install gpiozero!
     data = CPUTemperature()
-    return data.temperature
+    # Convert Temperature from C to F
+    return (data.temperature*1.8) + 32
 
 
 # Data analysis to determine if the plant needs watering.
@@ -165,8 +168,8 @@ try:
             humidity, temp = getTemperatureAndHumidity()
             cpuTemp = getCPUTemp()
             # Add Raw to the Total List of Raw
-            humidityRaw.append(humidity[0])
-            temperatureRaw.append(temp[1])
+            humidityRaw.append(humidity[0])  # Access First Element of Humidity Tuple to read value
+            temperatureRaw.append(temp[1])  # Access Second Element of Temperature Tuple to read Fahrenheit
             oxygenRaw.append(o2)
             cpuTempRaw.append(cpuTemp)
         sampleEndTime = time.perf_counter() - startTime
@@ -197,35 +200,35 @@ try:
                 str(oxygenSamples[-1]),
                 str(cpuTempSamples[-1]),
             ]
-            log.write(".")
+            log.write(",".join(dataOut))
             print(dataOut)
 
         # TODO: Data Uplink -- CLOUD NOW -- make an account
 
         # TODO: Data Plotting (Make this into one function and pass in data arrays)
         # Sensor Temperature vs. Elapsed Time
-        #plt.figure()
-        #plt.title("Sensor Temperature (F) vs. Elapsed Time")
-        #plt.subplot(411)
-        #plt.plot(elapsedTimes, temperatureSamples)
+        plt.figure()
+        plt.title("Sensor Temperature (F) vs. Elapsed Time")
+        plt.subplot(411)
+        plt.plot(elapsedTimes, temperatureSamples)
 
         # CPU Temperature vs. Elapsed Time
-        #plt.title("CPU Temperature (F) vs. Elapsed Time")
-        #plt.subplot(412)
-        #plt.plot(elapsedTimes, cpuTempSamples)
+        plt.title("CPU Temperature (F) vs. Elapsed Time")
+        plt.subplot(412)
+        plt.plot(elapsedTimes, cpuTempSamples)
 
         # Relative Humidity vs. Elapsed Time
-        #plt.title("Relative Humidity vs. Elapsed Time")
-        #plt.subplot(421)
-        #plt.plot(elapsedTimes, humiditySamples)
+        plt.title("Relative Humidity vs. Elapsed Time")
+        plt.subplot(421)
+        plt.plot(elapsedTimes, humiditySamples)
 
         # Oxygen vs. Elapsed Time
-        #plt.title("Oxygen Level vs. Elapsed Time")
-        #plt.subplot(422)
-        #plt.plot(elapsedTimes, oxygenRaw)
+        plt.title("Oxygen Level vs. Elapsed Time")
+        plt.subplot(422)
+        plt.plot(elapsedTimes, oxygenRaw)
 
-        #plt.show()
-        #plt.savefig("plotFileName.png")
+        plt.show()
+        plt.savefig("plotFileName.png")
 
         # TODO: Live GUI
 
