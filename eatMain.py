@@ -206,7 +206,6 @@ try:
         # TODO: Data Uplink -- CLOUD NOW -- make an account
 
         # TODO: Data Plotting (Make this into one function and pass in data arrays)
-        fig.suptitle('Sharing both axes')
 
         # Sensor Temperature vs. Elapsed Time
         fig, axs = plt.subplots(4, sharex=True)
