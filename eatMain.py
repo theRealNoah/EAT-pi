@@ -225,9 +225,9 @@ try:
         # Oxygen vs. Elapsed Time
         plt.title("Oxygen Level vs. Elapsed Time")
         plt.subplot(422)
-        plt.plot(elapsedTimes, oxygenRaw)
+        plt.plot(elapsedTimes, oxygenSamples)
 
-        plt.show()
+        # plt.show()
         plt.savefig("plotFileName.png")
 
         # TODO: Live GUI
