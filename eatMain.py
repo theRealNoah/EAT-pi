@@ -232,28 +232,7 @@ try:
             ax.label_outer()
         # plt.show()
         plt.savefig("plottype1.png")
-
-        fig = plt.figure()
-        fig.suptitle("Graphs", fontsize=16)
-        ax = plt.subplot(411)
-        ax.set_title("Sensor Temperature (F) vs. Elapsed Time")
-        ax.plot(elapsedTimes, temperatureSamples)
-
-        ax = plt.subplot(412)
-        ax.set_title("CPU Temperature (F) vs. Elapsed Time")
-        ax.plot(elapsedTimes, cpuTempSamples)
-
-        ax = plt.subplot(421)
-        ax.set_title("Relative Humidity vs. Elapsed Time")
-        ax.plot(elapsedTimes, humiditySamples)
-
-        ax = plt.subplot(422)
-        ax.set_title("Oxygen Level vs. Elapsed Time")
-        ax.plot(elapsedTimes, oxygenSamples)
-
-        plt.savefig("plottype2.png")
-
-
+        plt.close()
         # TODO: Live GUI
 
         # Sleep between Sample Times
