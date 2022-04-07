@@ -206,29 +206,54 @@ try:
         # TODO: Data Uplink -- CLOUD NOW -- make an account
 
         # TODO: Data Plotting (Make this into one function and pass in data arrays)
+        fig.suptitle('Sharing both axes')
+
         # Sensor Temperature vs. Elapsed Time
-        plt.figure()
-        plt.title("Sensor Temperature (F) vs. Elapsed Time")
-        plt.subplot(411)
-        plt.plot(elapsedTimes, temperatureSamples)
+        fig, axs = plt.subplots(4, sharex=True)
+        # plt.title("Sensor Temperature (F) vs. Elapsed Time")
+        axs[0].plot(elapsedTimes, temperatureSamples)
 
         # CPU Temperature vs. Elapsed Time
-        plt.title("CPU Temperature (F) vs. Elapsed Time")
-        plt.subplot(412)
-        plt.plot(elapsedTimes, cpuTempSamples)
+        # plt.title("CPU Temperature (F) vs. Elapsed Time")
+
+        axs[1].plot(elapsedTimes, cpuTempSamples)
 
         # Relative Humidity vs. Elapsed Time
-        plt.title("Relative Humidity vs. Elapsed Time")
-        plt.subplot(421)
-        plt.plot(elapsedTimes, humiditySamples)
+        # plt.title("Relative Humidity vs. Elapsed Time")
+
+        axs[2].plot(elapsedTimes, humiditySamples)
 
         # Oxygen vs. Elapsed Time
-        plt.title("Oxygen Level vs. Elapsed Time")
-        plt.subplot(422)
-        plt.plot(elapsedTimes, oxygenSamples)
+        # plt.title("Oxygen Level vs. Elapsed Time")
 
+        axs[3].plot(elapsedTimes, oxygenSamples)
+
+        # Hide x labels and tick labels for all but bottom plot.
+        for ax in axs:
+            ax.label_outer()
         # plt.show()
-        plt.savefig("plotFileName.png")
+        plt.savefig("plottype1.png")
+
+        fig = plt.figure()
+        fig.suptitle("Graphs", fontsize=16)
+        ax = plt.subplot("411")
+        ax.set_title("Sensor Temperature (F) vs. Elapsed Time")
+        ax.plot(elapsedTimes, temperatureSamples)
+
+        ax = plt.subplot("412")
+        ax.set_title("CPU Temperature (F) vs. Elapsed Time")
+        ax.plot(elapsedTimes, cpuTempSamples)
+
+        ax = plt.subplot("421")
+        ax.set_title("Relative Humidity vs. Elapsed Time")
+        ax.plot(elapsedTimes, humiditySamples)
+
+        ax = plt.subplot("422")
+        ax.set_title("Oxygen Level vs. Elapsed Time")
+        ax.plot(elapsedTimes, oxygenSamples)
+
+        plt.savefig("plottype2.png")
+
 
         # TODO: Live GUI
 
