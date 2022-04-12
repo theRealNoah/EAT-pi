@@ -8,16 +8,18 @@ import subprocess
 # - sensor https://github.com/nickoala/sensor
 # - RPi.GPIO https://pypi.org/project/RPi.GPIO/
 # - matplotlib https://matplotlib.org/stable/index.html
-# - numpy - Need specific version to work with Python 3.9
+# - numpy https://numpy.org/
+#   - Need specific version 1.20.0 to work with Python 3.9
+# - gpiozero https://gpiozero.readthedocs.io/en/stable/index.html
 
 packages = [
     "sensor",
     "RPi.GPIO",
     "matplotlib",
     "numpy==1.20.0",
+    "gpiozero",
 ]
 
 for package in packages:
     # implement pip as a subprocess to install packages needed
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
-    package])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
