@@ -7,6 +7,30 @@ from datetime import datetime
 from DF_Oxygen import *
 import matplotlib.pyplot as plt
 from gpiozero import CPUTemperature
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+
+# Google Authentication for Uploading Plots and Images
+gauth = GoogleAuth()
+# Try to load saved client credentials
+gauth.LoadCredentialsFile("google_creds.txt")
+if gauth.credentials is None:
+    # Authenticate if they're not there
+    gauth.LocalWebserverAuth()
+elif gauth.access_token_expired:
+    # Refresh them if expired
+    print('token expired')
+    gauth.Refresh()
+else:
+    # Initialize the saved creds
+    gauth.Authorize()
+# Save the current credentials to a file
+gauth.SaveCredentialsFile("google_creds.txt")
+drive = GoogleDrive(gauth)
+latest_plant_image_folder_id = "1cmch7qs3WFkpS8GLzCbclByMP7uN3_dq"
+archive_plant_image_folder_id = "1UBtqvBXPVuEiwwb6G7ogHJ5iie4RP3Nv"
+plot_folder_id = "1PXfi9Ked4a14cCu0gaI6VATY_K6fNgld"
+
 
 # Create file for data logging.
 fileHeaders = ["Time", "Temp (F)", "Humidity", "Oxygen", "CPU Temp"]
@@ -72,6 +96,7 @@ temperatureSamples = []
 oxygenSamples = []
 cpuTempSamples = []
 elapsedTimes = []
+sampleCounter = 0
 # Adjust this variable to increase raw data points per sample.
 rawDataPerSample = 10
 
@@ -154,6 +179,53 @@ def captureImage(timestamp):
     subprocess.run(["libcamera-jpeg", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
 
+def sortingImages(image):
+    intValue = int(image.split('.')[0])
+    return intValue
+
+def uploadImages():
+    # Populate upload_file_list with images in oldest to recent order with latest file being last.
+    pwd = os.getcwd()
+    os.chdir(pwd + "/Images")
+    images = os.listdir()
+    images.sort(key=sortingImages)
+    os.chdir("..")  # Return to EAT-pi directory.
+    upload_file_list = images
+    for upload_file in upload_file_list:
+        str = "\'" + latest_plant_image_folder_id + "\'" + " in parents and trashed=false"
+        file_list = drive.ListFile({'q': str}).GetList()
+        # Move Latest Photo to Archive
+        if file_list:
+            file = file_list[0]
+            filename = file['title']
+            file.GetContentFile(filename)
+            gfile = drive.CreateFile({'parents': [{'id': archive_folder_id}]})
+            gfile.SetContentFile(filename)
+            gfile.Upload()
+            file.Trash()
+        # Upload latest photo
+        gfile = drive.CreateFile({'parents': [{'id': latest_plant_image_folder_id}]})
+        # Read file and set it as the content of this instance.
+        gfile.SetContentFile(upload_file)
+        gfile.Upload()
+        print('Finished Image Upload')
+
+def uploadPlots():
+    # Populate plot_files with the plots that need to be uploaded
+    pwd = os.getcwd()
+    os.chdir(pwd + "/Plots")
+    images = os.listdir()
+    images.sort(key=sortingImages)
+    os.chdir("..")  # Return to EAT-pi directory.
+    plot_files = images
+    for plot_file in plot_files:
+        # Upload the Plot
+        gfile = drive.CreateFile({'parents': [{'id': plot_folder_id}]})
+        # Read file and set it as the content of this instance.
+        gfile.SetContentFile(plot_file)
+        gfile.Upload()
+        print('Finished Plot File Upload')
+
 
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
 try:
@@ -190,7 +262,7 @@ try:
 
         # subprocess.run(["sudo", "service", "htpdate", "force-reload"])  # Force time synchronization.
         date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
-        # captureImage(sampleEndTime)
+        # captureImage(int(sampleEndTime))
 
         with open("eatLog.txt", "a") as log:
             dataOut = [
@@ -231,10 +303,21 @@ try:
         for ax in axs:
             ax.label_outer()
         # plt.show()
-        plt.savefig("plottype1.png")
+
+        pwd = os.getcwd()
+        if not os.path.exists(pwd + "/Plots"):  # Create directory for image storage.
+            os.mkdir(pwd + "/Plots")
+        os.chdir(pwd + "/Plots")
+        plt.savefig("EAT_Status.png")
+        os.chdir("..")  # Return to EAT-pi directory.
+
         plt.close()
         # TODO: Live GUI
 
+        sampleCounter += 1
+        if sampleCounter % 10 == 0:
+            uploadImages()
+            uploadPlots()
         # Sleep between Sample Times
         time.sleep(5)
 except KeyboardInterrupt:

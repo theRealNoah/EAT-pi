@@ -20,16 +20,15 @@ gauth.SaveCredentialsFile("google_creds.txt")
 
 
 drive = GoogleDrive(gauth)
-latest_folder_id = "1jCBBI34RIAPvb0K4S-vrZavcQEx00wr-"
-archive_folder_id = "1t95ioPnTDzyNo6dUaR7rql0ighCB24lO"
+latest_plant_image_folder_id = "1cmch7qs3WFkpS8GLzCbclByMP7uN3_dq"
+archive_plant_image_folder_id = "1UBtqvBXPVuEiwwb6G7ogHJ5iie4RP3Nv"
+plot_folder_id = "1PXfi9Ked4a14cCu0gaI6VATY_K6fNgld"
 
-upload_file_list = ["C:\\Users\\idach\\Pictures\\Wallpaper 4k 1.jpg",
-                    "C:\\Users\\idach\\Pictures\\me 4 problem 9.PNG",
-                    ]
+upload_file_list = []
 for upload_file in upload_file_list:
-    str = "\'" + latest_folder_id + "\'" + " in parents and trashed=false"
+    str = "\'" + latest_plant_image_folder_id + "\'" + " in parents and trashed=false"
     file_list = drive.ListFile({'q': str}).GetList()
-    print(file_list)
+    # Move Latest Photo to Archive
     if file_list:
         file = file_list[0]
         filename = file['title']
@@ -38,10 +37,18 @@ for upload_file in upload_file_list:
         gfile.SetContentFile(filename)
         gfile.Upload()
         file.Trash()
-
-    gfile = drive.CreateFile({'parents': [{'id': latest_folder_id}]})
+    # Upload latest photo
+    gfile = drive.CreateFile({'parents': [{'id': latest_plant_image_folder_id}]})
     # Read file and set it as the content of this instance.
     gfile.SetContentFile(upload_file)
     gfile.Upload()
-    print('Finished Upload')
+    print('Finished Image Upload')
 
+plot_files = []
+for plot_file in plot_files:
+    # Upload the Plot
+    gfile = drive.CreateFile({'parents': [{'id': plot_folder_id}]})
+    # Read file and set it as the content of this instance.
+    gfile.SetContentFile(plot_file)
+    gfile.Upload()
+    print('Finished Plot File Upload')
