@@ -145,13 +145,13 @@ def avg(data):
 
 
 # Function to capture image using Raspberry Pi Camera.
-def captureImage(date):
+def captureImage(timestamp):
     pwd = os.getcwd()
     if not os.path.exists(pwd + "/Images"):  # Create directory for image storage.
         os.mkdir(pwd + "/Images")
     os.chdir(pwd + "/Images")
     print("\nSay cheese Little Gem!")
-    subprocess.run(["libcamera-jpeg", "-o", date + ".jpeg"])  # Capture image.
+    subprocess.run(["libcamera-jpeg", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
 
 
@@ -190,7 +190,7 @@ try:
 
         # subprocess.run(["sudo", "service", "htpdate", "force-reload"])  # Force time synchronization.
         date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
-        # captureImage(date)
+        # captureImage(sampleEndTime)
 
         with open("eatLog.txt", "a") as log:
             dataOut = [

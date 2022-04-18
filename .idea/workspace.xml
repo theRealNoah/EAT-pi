@@ -20,7 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d782f82-39df-4437-998f-d2909a2dae10" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/settings.yml" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/EAT-pi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/EAT-pi.iml" afterDir="false" />
+>>>>>>> 2a98833b8b01924b8df233773ea80632f08adf12
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eatSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/eatSetup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/upload_log.py" beforeDir="false" afterPath="$PROJECT_DIR$/upload_log.py" afterDir="false" />
