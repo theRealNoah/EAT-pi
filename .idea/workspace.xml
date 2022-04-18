@@ -20,8 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d782f82-39df-4437-998f-d2909a2dae10" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/settings.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eatMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/eatMain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eatSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/eatSetup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload_log.py" beforeDir="false" afterPath="$PROJECT_DIR$/upload_log.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,5 +82,11 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="422" y="92" key="FileChooserDialogImpl" timestamp="1649979964281">
+      <screen x="0" y="0" width="1280" height="672" />
+    </state>
+    <state x="422" y="92" key="FileChooserDialogImpl/0.0.1280.672@0.0.1280.672" timestamp="1649979964281" />
   </component>
 </project>

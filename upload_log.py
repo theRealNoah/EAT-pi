@@ -1,39 +1,47 @@
-# !pip install requests
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
-# !pip install requests_ntlm
+gauth = GoogleAuth()
 
-# Import required packages
-import sys
-import requests
-from requests_ntlm import HttpNtlmAuth
+# Try to load saved client credentials
+gauth.LoadCredentialsFile("google_creds.txt")
+if gauth.credentials is None:
+    # Authenticate if they're not there
+    gauth.LocalWebserverAuth()
+elif gauth.access_token_expired:
+    # Refresh them if expired
+    print('token expired')
+    gauth.Refresh()
+else:
+    # Initialize the saved creds
+    gauth.Authorize()
+# Save the current credentials to a file
+gauth.SaveCredentialsFile("google_creds.txt")
 
 
+drive = GoogleDrive(gauth)
+latest_folder_id = "1jCBBI34RIAPvb0K4S-vrZavcQEx00wr-"
+archive_folder_id = "1t95ioPnTDzyNo6dUaR7rql0ighCB24lO"
 
-# Read filename (relative path) from command line
-fileName = 'eatLog.txt'
+upload_file_list = ["C:\\Users\\idach\\Pictures\\Wallpaper 4k 1.jpg",
+                    "C:\\Users\\idach\\Pictures\\me 4 problem 9.PNG",
+                    ]
+for upload_file in upload_file_list:
+    str = "\'" + latest_folder_id + "\'" + " in parents and trashed=false"
+    file_list = drive.ListFile({'q': str}).GetList()
+    print(file_list)
+    if file_list:
+        file = file_list[0]
+        filename = file['title']
+        file.GetContentFile(filename)
+        gfile = drive.CreateFile({'parents': [{'id': archive_folder_id}]})
+        gfile.SetContentFile(filename)
+        gfile.Upload()
+        file.Trash()
 
-# Enter your SharePoint site and target library
-sharePointUrl = 'https://usfedu.sharepoint.com/teams/EEDesign198GRP'
-folderUrl = 'https://usfedu.sharepoint.com/:f:/t/EEDesign198GRP/EltzYZbFdiJIuyTANBVpGVABohiUDKWn4VUaCsv1KBkH2A?e=LJj1dN'
+    gfile = drive.CreateFile({'parents': [{'id': latest_folder_id}]})
+    # Read file and set it as the content of this instance.
+    gfile.SetContentFile(upload_file)
+    gfile.Upload()
+    print('Finished Upload')
 
-# Sets up the url for requesting a file upload
-requestUrl = sharePointUrl + '/_api/web/getfolderbyserverrelativeurl(\'' + folderUrl + '\')/Files/add(url=\'' + fileName + '\',overwrite=true)'
-
-# Read in the file that we are going to upload
-file = open(fileName, 'rb')
-
-# Setup the required headers for communicating with SharePoint
-headers = {'Content-Type': 'application/json; odata=verbose', 'accept': 'application/json;odata=verbose'}
-
-# Execute a request to get the FormDigestValue. This will be used to authenticate our upload request
-r = requests.post(sharePointUrl + "/_api/contextinfo", auth=HttpNtlmAuth('FOREST\\hamiltonn', PW),
-                  headers=headers)
-formDigestValue = r.json()['d']['GetContextWebInformation']['FormDigestValue']
-
-# Update headers to use the newly acquired FormDigestValue
-headers = {'Content-Type': 'application/json; odata=verbose', 'accept': 'application/json;odata=verbose',
-           'x-requestdigest': formDigestValue}
-
-# Execute the request. If you run into issues, inspect the contents of uploadResult
-uploadResult = requests.post(requestUrl, auth=HttpNtlmAuth('FOREST\\hamiltonn', PW), headers=headers,
-                             data=file.read())
