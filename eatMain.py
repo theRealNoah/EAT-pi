@@ -191,6 +191,8 @@ def uploadImages():
     images.sort(key=sortingImages)
     os.chdir("..")  # Return to EAT-pi directory.
     upload_file_list = images
+    print('Right before images')
+    print(images)
     for upload_file in upload_file_list:
         str = "\'" + latest_plant_image_folder_id + "\'" + " in parents and trashed=false"
         file_list = drive.ListFile({'q': str}).GetList()
@@ -218,6 +220,8 @@ def uploadPlots():
     images.sort(key=sortingImages)
     os.chdir("..")  # Return to EAT-pi directory.
     plot_files = images
+    print('Right before images')
+    print(plot_files)
     for plot_file in plot_files:
         # Upload the Plot
         gfile = drive.CreateFile({'parents': [{'id': plot_folder_id}]})
@@ -258,11 +262,11 @@ try:
             pumpWater()
 
         # TODO: Put the grow lights on a timer by using elapsed time, so whatever interval we determine
-        GPIO.output(growLights, GPIO.HIGH)
+        # GPIO.output(growLights, GPIO.HIGH)
 
         # subprocess.run(["sudo", "service", "htpdate", "force-reload"])  # Force time synchronization.
         date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
-        # captureImage(int(sampleEndTime))
+        captureImage(int(sampleEndTime))
 
         with open("eatLog.txt", "a") as log:
             dataOut = [
@@ -278,6 +282,7 @@ try:
         # TODO: Data Uplink -- CLOUD NOW -- make an account
 
         # TODO: Data Plotting (Make this into one function and pass in data arrays)
+
 
         # Sensor Temperature vs. Elapsed Time
         fig, axs = plt.subplots(4, sharex=True)
@@ -309,14 +314,17 @@ try:
             os.mkdir(pwd + "/Plots")
         os.chdir(pwd + "/Plots")
         plt.savefig("EAT_Status.png")
+        print('Plot Saved')
         os.chdir("..")  # Return to EAT-pi directory.
 
         plt.close()
         # TODO: Live GUI
 
         sampleCounter += 1
-        if sampleCounter % 10 == 0:
+        if sampleCounter % 5 == 0:
+            print('Begin Upload Images')
             uploadImages()
+            print('Begin Upload Plots')
             uploadPlots()
         # Sleep between Sample Times
         time.sleep(5)
