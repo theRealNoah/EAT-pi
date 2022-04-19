@@ -189,7 +189,7 @@ def uploadImages():
     os.chdir(pwd + "/Images")
     images = os.listdir()
     images.sort(key=sortingImages)
-    os.chdir("..")  # Return to EAT-pi directory.
+
     upload_file_list = images
     print('Right before images')
     print(images)
@@ -211,6 +211,7 @@ def uploadImages():
         gfile.SetContentFile(upload_file)
         gfile.Upload()
         print('Finished Image Upload')
+    os.chdir("..")  # Return to EAT-pi directory.
 
 def uploadPlots():
     # Populate plot_files with the plots that need to be uploaded
@@ -218,7 +219,6 @@ def uploadPlots():
     os.chdir(pwd + "/Plots")
     images = os.listdir()
     images.sort(key=sortingImages)
-    os.chdir("..")  # Return to EAT-pi directory.
     plot_files = images
     print('Right before images')
     print(plot_files)
@@ -229,7 +229,7 @@ def uploadPlots():
         gfile.SetContentFile(plot_file)
         gfile.Upload()
         print('Finished Plot File Upload')
-
+    os.chdir("..")  # Return to EAT-pi directory.
 
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
 try:
