@@ -201,7 +201,7 @@ def uploadImages():
             file = file_list[0]
             filename = file['title']
             file.GetContentFile(filename)
-            gfile = drive.CreateFile({'parents': [{'id': archive_folder_id}]})
+            gfile = drive.CreateFile({'parents': [{'id': archive_plant_image_folder_id}]})
             gfile.SetContentFile(filename)
             gfile.Upload()
             file.Trash()
@@ -331,3 +331,4 @@ try:
 except KeyboardInterrupt:
     print("\n------------------\nEAT SYSTEM OFFLINE\n------------------")
     GPIO.cleanup()
+
