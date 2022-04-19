@@ -220,9 +220,6 @@ def uploadPlots():
     pwd = os.getcwd()
     os.chdir(pwd + "/Plots")
     images = os.listdir()
-    images.sort(key=sortingImages)
-    if "google_creds.txt" in images:
-        images.remove("google_creds.txt")
     plot_files = images
     print('Right before images')
     print(plot_files)
