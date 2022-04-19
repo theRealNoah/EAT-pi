@@ -39,9 +39,6 @@ with open("eatLog.txt", "w+") as newFile:
     # Begin a Timer
     startTime = time.perf_counter()
 
-# TODO: Check if txt exists, if so read latest elapsed time, if not, create new timer
-
-
 # Set the naming convention for pins to use the numbers
 # after GPIO{}
 # e.g. GPIO18
@@ -51,7 +48,6 @@ GPIO.setmode(GPIO.BCM)
 sen0227 = SHT20(1, 0x40)
 
 # Set the GPIO Pin for powering lights
-# TODO: This needs to be updated to support MOSFET / Thyristor Circuit
 growLights = 21
 GPIO.setup(growLights, GPIO.OUT)
 
@@ -147,7 +143,6 @@ def getOxygen():
 
 # Function to return CPU temperature over time.
 def getCPUTemp():
-    # TODO: Pip install gpiozero!
     data = CPUTemperature()
     # Convert Temperature from C to F
     return (data.temperature*1.8) + 32
@@ -166,6 +161,7 @@ def isPlantThirsty(humidity):
 
 
 def actuateGrowLights(currentTime):
+    # Actuate the Lights if time is between 0-8hrs and Turn off lights between hours 8-24
     # If current time divided by 86400 remainder is less than 28800, turn ON.
     # i.e. Current time of the current day.
     if currentTime % 86400 < 28800:
@@ -178,7 +174,6 @@ def actuateGrowLights(currentTime):
 
 def avg(data):
     return sum(data) / len(data)
-
 
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(timestamp):
@@ -291,35 +286,33 @@ try:
             log.write(",".join(dataOut))
             print(dataOut)
 
-        # TODO: Data Uplink -- CLOUD NOW -- make an account
-
         # TODO: Data Plotting (Make this into one function and pass in data arrays)
 
 
         # Sensor Temperature vs. Elapsed Time
         fig, axs = plt.subplots(4, sharex=True)
+        fig.suptitle('EAT Status')
+
         # plt.title("Sensor Temperature (F) vs. Elapsed Time")
         axs[0].plot(elapsedTimes, temperatureSamples)
+        axs[0].set_ylabel('Root Temperature (F)')
 
         # CPU Temperature vs. Elapsed Time
-        # plt.title("CPU Temperature (F) vs. Elapsed Time")
-
         axs[1].plot(elapsedTimes, cpuTempSamples)
+        axs[1].set_ylabel('CPU Temperature (F)')
 
         # Relative Humidity vs. Elapsed Time
-        # plt.title("Relative Humidity vs. Elapsed Time")
-
         axs[2].plot(elapsedTimes, humiditySamples)
+        axs[2].set_ylabel('Relative Humidity %')
 
         # Oxygen vs. Elapsed Time
-        # plt.title("Oxygen Level vs. Elapsed Time")
-
         axs[3].plot(elapsedTimes, oxygenSamples)
+        axs[3].set_ylabel('Oxygen Concentration %')
+        axs[3].sex_xlabel('Elapsed Time (s)')
 
         # Hide x labels and tick labels for all but bottom plot.
         for ax in axs:
             ax.label_outer()
-        # plt.show()
 
         pwd = os.getcwd()
         if not os.path.exists(pwd + "/Plots"):  # Create directory for image storage.
@@ -327,12 +320,11 @@ try:
         os.chdir(pwd + "/Plots")
         plt.savefig("EAT_Status.png")
         print('Plot Saved')
+        plt.close()
         os.chdir("..")  # Return to EAT-pi directory.
 
-        plt.close()
-        # TODO: Live GUI
-
         sampleCounter += 1
+        # Upload Data every a certain amount of samples
         if sampleCounter % 5 == 0:
             print('Begin Upload Images')
             uploadImages()
