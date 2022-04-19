@@ -20,7 +20,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d782f82-39df-4437-998f-d2909a2dae10" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/client_secrets.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/google_creds.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/settings.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eatMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/eatMain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eatSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/eatSetup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload_log.py" beforeDir="false" afterPath="$PROJECT_DIR$/upload_log.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,5 +85,11 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="234" y="125" width="982" height="675" key="DiffContextDialog" timestamp="1650379881464">
+      <screen x="50" y="25" width="1390" height="875" />
+    </state>
+    <state x="234" y="125" width="982" height="675" key="DiffContextDialog/50.25.1390.875@50.25.1390.875" timestamp="1650379881464" />
   </component>
 </project>

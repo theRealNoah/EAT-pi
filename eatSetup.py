@@ -11,6 +11,7 @@ import subprocess
 # - numpy https://numpy.org/
 #   - Need specific version 1.20.0 to work with Python 3.9
 # - gpiozero https://gpiozero.readthedocs.io/en/stable/index.html
+# - pyDrive https://pythonhosted.org/PyDrive/
 
 packages = [
     "sensor",
@@ -18,6 +19,7 @@ packages = [
     "matplotlib",
     "numpy==1.20.0",
     "gpiozero",
+    "pydrive"
 ]
 
 for package in packages:
