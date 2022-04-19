@@ -5,12 +5,12 @@ import sys
 GPIO.setmode(GPIO.BCM)
 
 # Create file for before cal
-with open("o2BeforeCal.txt", "w") as log:
+with open("o2BeforeCal2.txt", "w") as log:
     log.write("EAT Oxygen Sensor Calibration BEFORE LOG:\n")
 
 
 # Create file for after cal
-with open("o2AfterCal.txt", "w") as log:
+with open("o2AfterCal2.txt", "w") as log:
     log.write("EAT Oxygen Sensor Calibration AFTER LOG:\n")
 
 
@@ -33,7 +33,7 @@ try:
         print("oxygen concentration is %4.2f %%vol" % o2)
         counter += 1
         time.sleep(1)
-        with open("o2BeforeCal.txt", "a") as log:
+        with open("o2BeforeCal2.txt", "a") as log:
             log.write(",".join(oxygenRaw))
     print('Three Minutes Have Passed')
     time.sleep(10)
@@ -47,7 +47,7 @@ try:
         print("oxygen concentration is %4.2f %%vol" % o2)
         counter += 1
         time.sleep(1)
-        with open("o2AfterCal.txt", "a") as log:
+        with open("o2AfterCal2.txt", "a") as log:
             log.write(",".join(oxygenRaw))
     print('Finished Cal')
 except KeyboardInterrupt as e:
