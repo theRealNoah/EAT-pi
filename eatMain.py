@@ -28,7 +28,7 @@ sen0227 = SHT20(1, 0x40)
 
 # Set the GPIO Pin for powering lights
 # TODO: This needs to be updated to support MOSFET / Thyristor Circuit
-growLights = 26
+growLights = 21
 GPIO.setup(growLights, GPIO.OUT)
 
 # Set input pins for Step Motor 28BYJ-48, inputPins = [IN1, IN2, IN3, IN4].
@@ -140,6 +140,17 @@ def isPlantThirsty(humidity):
         return False
 
 
+def actuateGrowLights(currentTime):
+    # If current time divided by 86400 remainder is less than 28800, turn ON.
+    # i.e. Current time of the current day.
+    if currentTime % 86400 < 28800:
+        # To turn on LED Power MOSFET Circuit.
+        GPIO.output(growLights, GPIO.HIGH)
+    else:
+        # To turn off LED Power MOSFET Circuit.
+        GPIO.output(growLights, GPIO.HIGH)
+
+
 def avg(data):
     return sum(data) / len(data)
 
@@ -181,12 +192,12 @@ try:
         oxygenSamples.append(avg(oxygenRaw[-rawDataPerSample:]))
         cpuTempSamples.append(avg(cpuTempRaw[-rawDataPerSample:]))
 
-        # Pass the sample to the decision making function
+        # Pass the sample to the decision making function.
         if isPlantThirsty(humiditySamples[-1]):
             pumpWater()
 
-        # TODO: Put the grow lights on a timer by using elapsed time, so whatever interval we determine
-        GPIO.output(growLights, GPIO.HIGH)
+        # Pass the current time to LED control function.
+        actuateGrowLights(sampleEndTime)
 
         # subprocess.run(["sudo", "service", "htpdate", "force-reload"])  # Force time synchronization.
         date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
