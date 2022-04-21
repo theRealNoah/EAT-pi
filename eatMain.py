@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from gpiozero import CPUTemperature
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+import numpy
 
 # Google Authentication for Uploading Plots and Images
 gauth = GoogleAuth()
@@ -27,9 +28,9 @@ else:
 # Save the current credentials to a file
 gauth.SaveCredentialsFile("google_creds.txt")
 drive = GoogleDrive(gauth)
-latest_plant_image_folder_id = "1cmch7qs3WFkpS8GLzCbclByMP7uN3_dq"
-archive_plant_image_folder_id = "1UBtqvBXPVuEiwwb6G7ogHJ5iie4RP3Nv"
-plot_folder_id = "1PXfi9Ked4a14cCu0gaI6VATY_K6fNgld"
+latestImageFolder = "1cmch7qs3WFkpS8GLzCbclByMP7uN3_dq"
+archiveImageFolder = "1UBtqvBXPVuEiwwb6G7ogHJ5iie4RP3Nv"
+plotFolder = "1PXfi9Ked4a14cCu0gaI6VATY_K6fNgld"
 
 
 # Create file for data logging.
@@ -47,8 +48,8 @@ GPIO.setmode(GPIO.BCM)
 # This is the humidity/temperature sensor, SHT20(Channel, Address).
 sen0227 = SHT20(1, 0x40)
 
-# Set the GPIO Pin for powering lights
-growLights = 21
+# Set the GPIO Pin for powering lights 'SPI0 CEO0'
+growLights = 8
 GPIO.setup(growLights, GPIO.OUT)
 
 # Set input pins for Step Motor 28BYJ-48, inputPins = [IN1, IN2, IN3, IN4].
@@ -83,6 +84,8 @@ seqCounter = 0
 revs = 1  # Edit the revolutions needed to deliver water.
 
 # Setup raw data arrays and sample arrays.
+sampleStartTime = 0
+sampleEndTime = 0
 humidityRaw = []
 temperatureRaw = []
 oxygenRaw = []
@@ -147,6 +150,30 @@ def getCPUTemp():
     # Convert Temperature from C to F
     return (data.temperature*1.8) + 32
 
+# Function to Sample and Average Data and save to Global Variables
+def sampleData():
+    global sampleStartTime, humidityRaw, temperatureRaw, oxygenRaw, cpuTempRaw, sampleEndTime, elapsedTimes
+    global humiditySamples, temperatureSamples, oxygenSamples, cpuTempSamples
+    # Capture Raw Data Points
+    sampleStartTime = time.perf_counter() - startTime  # Current Elapsed Time
+    for i in range(rawDataPerSample):
+        o2 = getOxygen()
+        humidity, temp = getTemperatureAndHumidity()
+        cpuTemp = getCPUTemp()
+        # Add Raw to the Total List of Raw
+        humidityRaw.append(humidity[0])  # Access First Element of Humidity Tuple to read value
+        temperatureRaw.append(temp[1])  # Access Second Element of Temperature Tuple to read Fahrenheit
+        oxygenRaw.append(o2)
+        cpuTempRaw.append(cpuTemp)
+    sampleEndTime = time.perf_counter() - startTime
+    elapsedTimes.append(sampleEndTime)
+
+    # Append the average of the latest samples to new arrays
+    humiditySamples.append(avg(humidityRaw[-rawDataPerSample:]))
+    temperatureSamples.append(avg(temperatureRaw[-rawDataPerSample:]))
+    oxygenSamples.append(avgRemoveOutlier(oxygenRaw[-rawDataPerSample:]))
+    cpuTempSamples.append(avg(cpuTempRaw[-rawDataPerSample:]))
+
 
 # Data analysis to determine if the plant needs watering.
 def isPlantThirsty(humidity):
@@ -160,23 +187,42 @@ def isPlantThirsty(humidity):
         return False
 
 
-def actuateGrowLights(currentTime):
+def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
     # Actuate the Lights if time is between 0-8hrs and Turn off lights between hours 8-24
     # If current time divided by 86400 remainder is less than 28800, turn ON.
     # i.e. Current time of the current day.
-    if currentTime % 86400 < 28800:
-        # To turn on LED Power MOSFET Circuit.
+    if forceOn:
         GPIO.output(growLights, GPIO.HIGH)
+    elif forceOff:
+        GPIO.output(growLights, GPIO.LOW)
     else:
-        # To turn off LED Power MOSFET Circuit.
-        GPIO.output(growLights, GPIO.HIGH)
+        if currentTime % 86400 < 28800:
+            # To turn on LED Power MOSFET Circuit.
+            GPIO.output(growLights, GPIO.HIGH)
+        else:
+            # To turn off LED Power MOSFET Circuit.
+            GPIO.output(growLights, GPIO.LOW)
 
 
 def avg(data):
     return sum(data) / len(data)
 
+def avgRemoveOutlier(data):
+    elements = numpy.array(data)
+    mean = numpy.mean(elements, axis=0)
+    sd = numpy.std(elements, axis=0)
+
+    finalList = [x for x in data if (x > mean - 2 * sd)]
+    finalList = [x for x in finalList if (x < mean + 2 * sd)]
+    weightedMean = numpy.mean(finalList, axis=0)
+    print('Normal Average' + str(mean))
+    print('Average Minus Outliers' + str(weightedMean))
+    return weightedMean
+
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(timestamp):
+    actuateGrowLights(timestamp, forceOn=True)
+    time.sleep(3)
     pwd = os.getcwd()
     if not os.path.exists(pwd + "/Images"):  # Create directory for image storage.
         os.mkdir(pwd + "/Images")
@@ -184,144 +230,139 @@ def captureImage(timestamp):
     print("\nSay cheese Little Gem!")
     subprocess.run(["libcamera-jpeg", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
+    actuateGrowLights(timestamp, forceOff=True)
+    time.sleep(3)
+
+def writeLog():
+    with open("eatLog.txt", "a") as log:
+        dataOut = [
+            str(elapsedTimes[-1]),
+            str(temperatureSamples[-1]),
+            str(humiditySamples[-1]),
+            str(oxygenSamples[-1]),
+            str(cpuTempSamples[-1]),
+        ]
+        log.write(",".join(dataOut))
+        print(dataOut)
+
+def plotData():
+    # Sensor Temperature vs. Elapsed Time
+    fig, axs = plt.subplots(4, sharex=True)
+    fig.suptitle('EAT Status')
+
+    # plt.title("Sensor Temperature (F) vs. Elapsed Time")
+    axs[0].plot(elapsedTimes, temperatureSamples)
+    axs[0].set_ylabel('Root Temperature (F)')
+
+    # CPU Temperature vs. Elapsed Time
+    axs[1].plot(elapsedTimes, cpuTempSamples)
+    axs[1].set_ylabel('CPU Temperature (F)')
+
+    # Relative Humidity vs. Elapsed Time
+    axs[2].plot(elapsedTimes, humiditySamples)
+    axs[2].set_ylabel('Relative Humidity %')
+
+    # Oxygen vs. Elapsed Time
+    axs[3].plot(elapsedTimes, oxygenSamples)
+    axs[3].set_ylabel('Oxygen Concentration %')
+    axs[3].sex_xlabel('Elapsed Time (s)')
+
+    # Hide x labels and tick labels for all but bottom plot.
+    for ax in axs:
+        ax.label_outer()
+
+    pwd = os.getcwd()
+    if not os.path.exists(pwd + "/Plots"):  # Create directory for image storage.
+        os.mkdir(pwd + "/Plots")
+    os.chdir(pwd + "/Plots")
+    plt.savefig("EAT_Status.png")
+    print('Plot Saved')
+    plt.close()
+    os.chdir("..")  # Return to EAT-pi directory.
+
 
 def sortingImages(image):
     intValue = int(image.split('.')[0])
     return intValue
 
 def uploadImages():
-    # Populate upload_file_list with images in oldest to recent order with latest file being last.
+    # Populate uploadFileList with images in oldest to recent order with latest file being last.
     pwd = os.getcwd()
     os.chdir(pwd + "/Images")
     images = os.listdir()
     if "google_creds.txt" in images:
         images.remove("google_creds.txt")
     images.sort(key=sortingImages)
-
-    upload_file_list = images
+    uploadFileList = images
     print('Right before images')
-    print(images)
-    for upload_file in upload_file_list:
-        str = "\'" + latest_plant_image_folder_id + "\'" + " in parents and trashed=false"
-        file_list = drive.ListFile({'q': str}).GetList()
+    for upload in uploadFileList:
+        str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
+        fileList = drive.ListFile({'q': str}).GetList()
         # Move Latest Photo to Archive
-        if file_list:
-            file = file_list[0]
+        if fileList:
+            file = fileList[0]
             filename = file['title']
             file.GetContentFile(filename)
-            gfile = drive.CreateFile({'parents': [{'id': archive_plant_image_folder_id}]})
+            gfile = drive.CreateFile({'parents': [{'id': archiveImageFolder}]})
             gfile.SetContentFile(filename)
             gfile.Upload()
             file.Trash()
         # Upload latest photo
-        gfile = drive.CreateFile({'parents': [{'id': latest_plant_image_folder_id}]})
+        gfile = drive.CreateFile({'parents': [{'id': latestImageFolder}]})
         # Read file and set it as the content of this instance.
-        gfile.SetContentFile(upload_file)
+        gfile.SetContentFile(upload)
         gfile.Upload()
         print('Finished Image Upload')
     os.chdir("..")  # Return to EAT-pi directory.
 
 def uploadPlots():
-    # Populate plot_files with the plots that need to be uploaded
+    # Populate plotFiles with the plots that need to be uploaded
     pwd = os.getcwd()
     os.chdir(pwd + "/Plots")
     images = os.listdir()
-    plot_files = images
+    plotFiles = images
+    if "google_creds.txt" in images:
+        images.remove("google_creds.txt")
     print('Right before images')
-    print(plot_files)
-    for plot_file in plot_files:
+    for plot in plotFiles:
+        str = "\'" + plotFolder + "\'" + " in parents and trashed=false"
+        fileList = drive.ListFile({'q': str}).GetList()
+        # Move Latest Photo to Archive
+        if fileList:
+            file = fileList[0]
+            file.Trash()
         # Upload the Plot
-        gfile = drive.CreateFile({'parents': [{'id': plot_folder_id}]})
+        gfile = drive.CreateFile({'parents': [{'id': plotFolder}]})
         # Read file and set it as the content of this instance.
-        gfile.SetContentFile(plot_file)
+        gfile.SetContentFile(plot)
         gfile.Upload()
         print('Finished Plot File Upload')
     os.chdir("..")  # Return to EAT-pi directory.
 
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
 try:
+    # TODO: Sensor Calibration
+    # Taking lots of data to normalize to a threshold
+
     while True:
-        # TODO: Sensor Calibration
-        # Taking lots of data to normalize to a threshold
+        # Read raw values from sensors and save average to global data arrays
+        sampleData()
 
-        # Capture Raw Data Points
-        sampleStartTime = time.perf_counter() - startTime  # Current Elapsed Time
-        for i in range(rawDataPerSample):
-            o2 = getOxygen()
-            humidity, temp = getTemperatureAndHumidity()
-            cpuTemp = getCPUTemp()
-            # Add Raw to the Total List of Raw
-            humidityRaw.append(humidity[0])  # Access First Element of Humidity Tuple to read value
-            temperatureRaw.append(temp[1])  # Access Second Element of Temperature Tuple to read Fahrenheit
-            oxygenRaw.append(o2)
-            cpuTempRaw.append(cpuTemp)
-        sampleEndTime = time.perf_counter() - startTime
-        elapsedTimes.append(sampleEndTime)
-
-        # Append the average of the latest samples to new arrays
-        humiditySamples.append(avg(humidityRaw[-rawDataPerSample:]))
-        temperatureSamples.append(avg(temperatureRaw[-rawDataPerSample:]))
-        oxygenSamples.append(avg(oxygenRaw[-rawDataPerSample:]))
-        cpuTempSamples.append(avg(cpuTempRaw[-rawDataPerSample:]))
-
-        # Pass the sample to the decision making function.
+        # Pass the latest sample to the decision making function.
         if isPlantThirsty(humiditySamples[-1]):
             pumpWater()
+
+        # Take image of the pi
+        captureImage(int(sampleEndTime))
 
         # Pass the current time to LED control function.
         actuateGrowLights(sampleEndTime)
 
-        # subprocess.run(["sudo", "service", "htpdate", "force-reload"])  # Force time synchronization.
-        date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
-        captureImage(int(sampleEndTime))
+        # Outputs Text File for Logging Data
+        writeLog()
 
-        with open("eatLog.txt", "a") as log:
-            dataOut = [
-                str(elapsedTimes[-1]),
-                str(temperatureSamples[-1]),
-                str(humiditySamples[-1]),
-                str(oxygenSamples[-1]),
-                str(cpuTempSamples[-1]),
-            ]
-            log.write(",".join(dataOut))
-            print(dataOut)
-
-        # TODO: Data Plotting (Make this into one function and pass in data arrays)
-
-
-        # Sensor Temperature vs. Elapsed Time
-        fig, axs = plt.subplots(4, sharex=True)
-        fig.suptitle('EAT Status')
-
-        # plt.title("Sensor Temperature (F) vs. Elapsed Time")
-        axs[0].plot(elapsedTimes, temperatureSamples)
-        axs[0].set_ylabel('Root Temperature (F)')
-
-        # CPU Temperature vs. Elapsed Time
-        axs[1].plot(elapsedTimes, cpuTempSamples)
-        axs[1].set_ylabel('CPU Temperature (F)')
-
-        # Relative Humidity vs. Elapsed Time
-        axs[2].plot(elapsedTimes, humiditySamples)
-        axs[2].set_ylabel('Relative Humidity %')
-
-        # Oxygen vs. Elapsed Time
-        axs[3].plot(elapsedTimes, oxygenSamples)
-        axs[3].set_ylabel('Oxygen Concentration %')
-        axs[3].sex_xlabel('Elapsed Time (s)')
-
-        # Hide x labels and tick labels for all but bottom plot.
-        for ax in axs:
-            ax.label_outer()
-
-        pwd = os.getcwd()
-        if not os.path.exists(pwd + "/Plots"):  # Create directory for image storage.
-            os.mkdir(pwd + "/Plots")
-        os.chdir(pwd + "/Plots")
-        plt.savefig("EAT_Status.png")
-        print('Plot Saved')
-        plt.close()
-        os.chdir("..")  # Return to EAT-pi directory.
+        # Generates Plot based on all samples continously
+        plotData()
 
         sampleCounter += 1
         # Upload Data every a certain amount of samples
