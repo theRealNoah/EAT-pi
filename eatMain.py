@@ -265,7 +265,7 @@ def plotData():
     # Oxygen vs. Elapsed Time
     axs[3].plot(elapsedTimes, oxygenSamples)
     axs[3].set_ylabel('Oxygen Concentration %')
-    axs[3].sex_xlabel('Elapsed Time (s)')
+    axs[3].set_xlabel('Elapsed Time (s)')
 
     # Hide x labels and tick labels for all but bottom plot.
     for ax in axs:
