@@ -215,8 +215,8 @@ def avgRemoveOutlier(data):
     finalList = [x for x in data if (x > mean - 2 * sd)]
     finalList = [x for x in finalList if (x < mean + 2 * sd)]
     weightedMean = numpy.mean(finalList, axis=0)
-    print('Normal Average' + str(mean))
-    print('Average Minus Outliers' + str(weightedMean))
+    print('Normal Average ' + str(mean))
+    print('Average Minus Outliers ' + str(weightedMean))
     return weightedMean
 
 # Function to capture image using Raspberry Pi Camera.
