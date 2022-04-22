@@ -32,9 +32,6 @@ class exitProgramError(KeyboardInterrupt):
 # Setup listener
 signal.signal(signal.SIGTERM, handler_stop_signals)
 
-# Clean up the GPIO Pins in order to ensure no voltage is just set when initializing program
-GPIO.cleanup()
-
 # Google Authentication for Uploading Plots and Images
 gauth = GoogleAuth()
 # Try to load saved client credentials
@@ -109,7 +106,7 @@ stepCount = len(seq)
 stepDir = 2  # Set to 1 or 2 for clockwise, negative for counter-clockwise.
 stepCounter = 0
 seqCounter = 0
-revs = 1  # Edit the revolutions needed to deliver water.
+revs = 5  # Edit the revolutions needed to deliver water.
 
 # Setup raw data arrays and sample arrays.
 sampleStartTime = 0
@@ -281,23 +278,33 @@ def plotData():
     fig, axs = plt.subplots(4, sharex=True)
     fig.suptitle('EAT Status')
 
+    color_cycle = plt.rcParams['axes.prop_cycle']()
+    degree_sign = u'\N{DEGREE SIGN}'
     # plt.title("Sensor Temperature (F) vs. Elapsed Time")
-    axs[0].plot(elapsedTimes, temperatureSamples)
-    axs[0].set_ylabel('Root Temperature (F)')
+    axs[0].plot(elapsedTimes, temperatureSamples, **next(color_cycle))
+    axs[0].set_ylabel('F'+degree_sign)
+    axs[0].set_title('Root Temperature')
 
     # CPU Temperature vs. Elapsed Time
-    axs[1].plot(elapsedTimes, cpuTempSamples)
-    axs[1].set_ylabel('CPU Temperature (F)')
+    axs[1].plot(elapsedTimes, cpuTempSamples, **next(color_cycle))
+    axs[1].set_ylabel('F'+degree_sign)
+    axs[1].set_title('CPU Temperature (F)')
 
     # Relative Humidity vs. Elapsed Time
-    axs[2].plot(elapsedTimes, humiditySamples)
-    axs[2].set_ylabel('Relative Humidity %')
+    axs[2].plot(elapsedTimes, humiditySamples, **next(color_cycle))
+    axs[2].set_ylabel('Percentage %')
+    axs[2].set_title('Relative Humidity %')
 
     # Oxygen vs. Elapsed Time
-    axs[3].plot(elapsedTimes, oxygenSamples)
-    axs[3].set_ylabel('Oxygen Concentration %')
+    axs[3].plot(elapsedTimes, oxygenSamples,  **next(color_cycle))
+    axs[3].set_ylabel('Percentage %')
+    axs[3].set_title('Oxygen Concentration %')
     axs[3].set_xlabel('Elapsed Time (s)')
 
+    # handles, labels = axs[3].get_legend_handles_labels()
+    # fig.legend(handles, labels, loc='upper center')
+    # fig.legend(bbox_to_anchor=(1, 1),
+    #           bbox_transform=fig.transFigure)
     # Hide x labels and tick labels for all but bottom plot.
     for ax in axs:
         ax.label_outer()
@@ -379,15 +386,15 @@ try:
         # Read raw values from sensors and save average to global data arrays
         sampleData()
 
+        # Pass the current time to LED control function.
+        actuateGrowLights(sampleEndTime)
+
         # Pass the latest sample to the decision making function.
         if isPlantThirsty(humiditySamples[-1]):
             pumpWater()
 
         # Take image of the pi
         captureImage(int(sampleEndTime))
-
-        # Pass the current time to LED control function.
-        actuateGrowLights(sampleEndTime)
 
         # Outputs Text File for Logging Data
         writeLog()

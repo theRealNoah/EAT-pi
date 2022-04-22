@@ -24,7 +24,7 @@ latest_plant_image_folder_id = "1cmch7qs3WFkpS8GLzCbclByMP7uN3_dq"
 archive_plant_image_folder_id = "1UBtqvBXPVuEiwwb6G7ogHJ5iie4RP3Nv"
 plot_folder_id = "1PXfi9Ked4a14cCu0gaI6VATY_K6fNgld"
 
-upload_file_list = []
+upload_file_list = ['"C:\\Users\\idach\\Pictures\\0.jpg"']
 for upload_file in upload_file_list:
     str = "\'" + latest_plant_image_folder_id + "\'" + " in parents and trashed=false"
     file_list = drive.ListFile({'q': str}).GetList()
@@ -33,7 +33,7 @@ for upload_file in upload_file_list:
         file = file_list[0]
         filename = file['title']
         file.GetContentFile(filename)
-        gfile = drive.CreateFile({'parents': [{'id': archive_folder_id}]})
+        gfile = drive.CreateFile({'parents': [{'id': archive_plant_image_folder_id}]})
         gfile.SetContentFile(filename)
         gfile.Upload()
         file.Trash()
