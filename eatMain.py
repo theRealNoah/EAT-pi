@@ -361,7 +361,7 @@ try:
         # Outputs Text File for Logging Data
         writeLog()
 
-        # Generates Plot based on all samples continously
+        # Generates Plot based on all samples continuously
         plotData()
 
         sampleCounter += 1
