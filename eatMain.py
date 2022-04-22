@@ -11,6 +11,9 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 import numpy
 
+# Clean up the GPIO Pins in order to ensure no voltage is just set when initializing program
+GPIO.cleanup()
+
 # Google Authentication for Uploading Plots and Images
 gauth = GoogleAuth()
 # Try to load saved client credentials
@@ -221,8 +224,10 @@ def avgRemoveOutlier(data):
 
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(timestamp):
-    actuateGrowLights(timestamp, forceOn=True)
-    time.sleep(3)
+    isLightOn = GPIO.input(growLights)
+    if ~isLightOn:
+        actuateGrowLights(timestamp, forceOn=True)
+        time.sleep(3)
     pwd = os.getcwd()
     if not os.path.exists(pwd + "/Images"):  # Create directory for image storage.
         os.mkdir(pwd + "/Images")
@@ -230,8 +235,9 @@ def captureImage(timestamp):
     print("\nSay cheese Little Gem!")
     subprocess.run(["libcamera-jpeg", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
-    actuateGrowLights(timestamp, forceOff=True)
-    time.sleep(3)
+    if ~isLightOn:
+        actuateGrowLights(timestamp, forceOff=True)
+        time.sleep(3)
 
 def writeLog():
     with open("eatLog.txt", "a") as log:
@@ -361,7 +367,7 @@ try:
         # Outputs Text File for Logging Data
         writeLog()
 
-        # Generates Plot based on all samples continously
+        # Generates Plot based on all samples continuously
         plotData()
 
         sampleCounter += 1

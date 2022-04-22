@@ -25,3 +25,6 @@ packages = [
 for package in packages:
     # implement pip as a subprocess to install packages needed
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
+
+import RPi.GPIO as GPIO
+GPIO.cleanup()
