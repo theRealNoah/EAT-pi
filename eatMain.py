@@ -276,30 +276,30 @@ def writeLog():
 def plotData():
     # Sensor Temperature vs. Elapsed Time
     fig, axs = plt.subplots(4, sharex=True)
-    fig.suptitle('EAT Status')
+    fig.suptitle('EAT Status', fontsize='x-large')
 
     color_cycle = plt.rcParams['axes.prop_cycle']()
     degree_sign = u'\N{DEGREE SIGN}'
     # plt.title("Sensor Temperature (F) vs. Elapsed Time")
     axs[0].plot(elapsedTimes, temperatureSamples, **next(color_cycle))
     axs[0].set_ylabel('F'+degree_sign)
-    axs[0].set_title('Root Temperature')
+    axs[0].set_title('Root Temperature', fontsize='small')
 
     # CPU Temperature vs. Elapsed Time
     axs[1].plot(elapsedTimes, cpuTempSamples, **next(color_cycle))
     axs[1].set_ylabel('F'+degree_sign)
-    axs[1].set_title('CPU Temperature (F)')
+    axs[1].set_title('CPU Temperature', fontsize='small')
 
     # Relative Humidity vs. Elapsed Time
     axs[2].plot(elapsedTimes, humiditySamples, **next(color_cycle))
-    axs[2].set_ylabel('Percentage %')
-    axs[2].set_title('Relative Humidity %')
+    axs[2].set_ylabel('%')
+    axs[2].set_title('Relative Humidity', fontsize='small')
 
     # Oxygen vs. Elapsed Time
     axs[3].plot(elapsedTimes, oxygenSamples,  **next(color_cycle))
-    axs[3].set_ylabel('Percentage %')
-    axs[3].set_title('Oxygen Concentration %')
-    axs[3].set_xlabel('Elapsed Time (s)')
+    axs[3].set_ylabel('%')
+    axs[3].set_title('Oxygen Concentration')
+    axs[3].set_xlabel('Elapsed Time (s)', fontsize='small')
 
     # handles, labels = axs[3].get_legend_handles_labels()
     # fig.legend(handles, labels, loc='upper center')
@@ -335,13 +335,17 @@ def uploadImages():
     print('Right before images')
     for upload in uploadFileList:
         str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
+        print('Before latest file')
         fileList = drive.ListFile({'q': str}).GetList()
+        print('Got Latest File')
         # Move Latest Photo to Archive
         if fileList:
             file = fileList[0]
             filename = file['title']
             file.GetContentFile(filename)
+            print('right before creation')
             gfile = drive.CreateFile({'parents': [{'id': archiveImageFolder}]})
+            print('right after creation')
             gfile.SetContentFile(filename)
             gfile.Upload()
             file.Trash()
@@ -361,7 +365,7 @@ def uploadPlots():
     plotFiles = images
     if "google_creds.txt" in images:
         images.remove("google_creds.txt")
-    print('Right before images')
+    print('Right before plot')
     for plot in plotFiles:
         str = "\'" + plotFolder + "\'" + " in parents and trashed=false"
         fileList = drive.ListFile({'q': str}).GetList()
