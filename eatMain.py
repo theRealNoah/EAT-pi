@@ -248,6 +248,7 @@ def avgRemoveOutlier(data):
 def captureImage(timestamp):
     isLightOn = GPIO.input(growLights)
     if ~isLightOn:
+        print('Force Light On')
         actuateGrowLights(timestamp, forceOn=True)
         time.sleep(3)
     pwd = os.getcwd()
@@ -258,6 +259,7 @@ def captureImage(timestamp):
     subprocess.run(["libcamera-jpeg", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
     if ~isLightOn:
+        print('Force Light Off')
         actuateGrowLights(timestamp, forceOff=True)
         time.sleep(3)
 
@@ -277,7 +279,7 @@ def plotData():
     # Sensor Temperature vs. Elapsed Time
     fig, axs = plt.subplots(4, sharex=True)
     fig.suptitle('EAT Status', fontsize='x-large')
-
+    fig.tight_layout()
     color_cycle = plt.rcParams['axes.prop_cycle']()
     degree_sign = u'\N{DEGREE SIGN}'
     # plt.title("Sensor Temperature (F) vs. Elapsed Time")
@@ -298,7 +300,7 @@ def plotData():
     # Oxygen vs. Elapsed Time
     axs[3].plot(elapsedTimes, oxygenSamples,  **next(color_cycle))
     axs[3].set_ylabel('%')
-    axs[3].set_title('Oxygen Concentration')
+    axs[3].set_title('Oxygen Concentration', fontsize='small')
     axs[3].set_xlabel('Elapsed Time (s)', fontsize='small')
 
     # handles, labels = axs[3].get_legend_handles_labels()
@@ -336,6 +338,7 @@ def uploadImages():
     for upload in uploadFileList:
         str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
         print('Before latest file')
+
         fileList = drive.ListFile({'q': str}).GetList()
         print('Got Latest File')
         # Move Latest Photo to Archive
