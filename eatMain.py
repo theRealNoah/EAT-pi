@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import subprocess
 import time
@@ -10,6 +12,25 @@ from gpiozero import CPUTemperature
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 import numpy
+import signal
+import sys
+
+# Steps for software defined termination
+# Establish ssh with Pi and use ps aux | grep eatMain.py
+# This returns process numbers
+# Use sudo kill [process number] for each process
+
+# Allows for eatMain.py to be terminated when run from boot
+# Raises exception when sudo kill signal is detected
+def handler_stop_signals(signum, frame):
+    raise exitProgramError
+
+# Define exception as for exiting for both KeyboardInterrupt
+class exitProgramError(KeyboardInterrupt):
+    pass
+
+# Setup listener
+signal.signal(signal.SIGTERM, handler_stop_signals)
 
 # Clean up the GPIO Pins in order to ensure no voltage is just set when initializing program
 GPIO.cleanup()
@@ -42,6 +63,10 @@ with open("eatLog.txt", "w+") as newFile:
     newFile.write(",".join(fileHeaders))
     # Begin a Timer
     startTime = time.perf_counter()
+
+# Create file for error logging
+with open("/home/pi/errorLog.txt", "w+") as log:
+    log.write("EAT ERROR LOG:\n")
 
 # Set the naming convention for pins to use the numbers
 # after GPIO{}
@@ -379,6 +404,10 @@ try:
             uploadPlots()
         # Sleep between Sample Times
         time.sleep(5)
-except KeyboardInterrupt:
+except KeyboardInterrupt as e:
     print("\n------------------\nEAT SYSTEM OFFLINE\n------------------")
+    with open("/home/pi/errorLog.txt", "a+") as log:
+        log.write(str(e))
+        log.write("\nEAT has encountered at time = " + str(sampleEndTime) + "\n")
     GPIO.cleanup()
+    sys.exit(0)

@@ -22,7 +22,6 @@
     <list default="true" id="9d782f82-39df-4437-998f-d2909a2dae10" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eatMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/eatMain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eatSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/eatSetup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,5 +91,9 @@
       <screen x="50" y="25" width="1390" height="875" />
     </state>
     <state x="234" y="125" width="982" height="675" key="DiffContextDialog/50.25.1390.875@50.25.1390.875" timestamp="1650379881464" />
+    <state x="303" y="-1" width="672" height="678" key="search.everywhere.popup" timestamp="1650651753772">
+      <screen x="0" y="0" width="1280" height="672" />
+    </state>
+    <state x="303" y="-1" width="672" height="678" key="search.everywhere.popup/0.0.1280.672@0.0.1280.672" timestamp="1650651753772" />
   </component>
 </project>
