@@ -256,7 +256,6 @@ def avgRemoveOutlier(data):
 
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(timestamp):
-    global isLightOn
     if ~isLightOn:
         print('Force Light On')
         actuateGrowLights(timestamp, forceOn=True)
