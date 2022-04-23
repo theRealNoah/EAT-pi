@@ -288,7 +288,6 @@ def plotData():
     fig, axs = plt.subplots(4, sharex=True,layout='tight', figsize=(8, 6))
 
     fig.suptitle('EAT Status', fontsize='large')
-    fig.tight_layout()
     color_cycle = plt.rcParams['axes.prop_cycle']()
     degree_sign = u'\N{DEGREE SIGN}'
     # plt.title("Sensor Temperature (F) vs. Elapsed Time")
