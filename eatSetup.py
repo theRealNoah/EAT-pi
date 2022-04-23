@@ -27,4 +27,8 @@ for package in packages:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
 
 import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+growLights = 8
+GPIO.setup(growLights, GPIO.OUT)
+GPIO.output(growLights, GPIO.LOW)
 GPIO.cleanup()

@@ -75,7 +75,7 @@ sen0227 = SHT20(1, 0x40)
 
 # Set the GPIO Pin for powering lights 'SPI0 CEO0'
 growLights = 8
-isLightOn = False
+isLightOn = True
 GPIO.setup(growLights, GPIO.OUT)
 
 # Set input pins for Step Motor 28BYJ-48, inputPins = [IN1, IN2, IN3, IN4].
@@ -247,7 +247,8 @@ def avgRemoveOutlier(data):
 
     finalList = [x for x in data if (x > mean - 2 * sd)]
     finalList = [x for x in finalList if (x < mean + 2 * sd)]
-    weightedMean = numpy.mean(finalList, axis=0)
+    if finalList:
+        weightedMean = numpy.mean(finalList, axis=0)
     print('Normal Average ' + str(mean))
     print('Average Minus Outliers ' + str(weightedMean))
     return weightedMean
