@@ -30,7 +30,7 @@ try:
     while(counter < 180):
         o2 = getOxygen()
         oxygenRaw.append(str(o2))
-        # print("oxygen concentration is %4.2f %%vol" % o2)
+        print("oxygen concentration is %4.2f %%vol" % o2)
         counter += 1
         time.sleep(1)
         with open("o2BeforeCal.txt", "a") as log:
@@ -42,7 +42,7 @@ try:
     while(counter < 180):
         o2 = getOxygen()
         oxygenRaw.append(str(o2))
-        # print("oxygen concentration is %4.2f %%vol" % o2)
+        print("oxygen concentration is %4.2f %%vol" % o2)
         counter += 1
         time.sleep(1)
         with open("o2AfterCal.txt", "a") as log:
