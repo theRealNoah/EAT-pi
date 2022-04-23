@@ -28,7 +28,7 @@ try:
         counter += 1
         time.sleep(1)
         with open("o2Cal.txt", "a") as log:
-            log.write(oxygenRaw)
+            log.write(",".join(oxygenRaw))
 
 except KeyboardInterrupt as e:
     print("\n------------------\nEAT SYSTEM OFFLINE\n------------------")
