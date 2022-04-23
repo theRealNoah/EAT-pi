@@ -24,12 +24,24 @@ try:
     while(counter < 180):
         o2 = getOxygen()
         oxygenRaw.append(str(o2))
-        print("oxygen concentration is %4.2f %%vol" % o2)
+        # print("oxygen concentration is %4.2f %%vol" % o2)
         counter += 1
         time.sleep(1)
-        with open("o2Cal.txt", "a") as log:
+        with open("o2BeforeCal.txt", "a") as log:
             log.write(",".join(oxygenRaw))
-
+    print('Three Minutes Have Passed')
+    time.sleep(10)
+    counter = 0
+    oxygenRaw = []
+    while(counter < 180):
+        o2 = getOxygen()
+        oxygenRaw.append(str(o2))
+        # print("oxygen concentration is %4.2f %%vol" % o2)
+        counter += 1
+        time.sleep(1)
+        with open("o2AfterCal.txt", "a") as log:
+            log.write(",".join(oxygenRaw))
+    print('Finished Cal')
 except KeyboardInterrupt as e:
     print("\n------------------\nEAT SYSTEM OFFLINE\n------------------")
     GPIO.cleanup()
