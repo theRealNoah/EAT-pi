@@ -52,5 +52,4 @@ try:
     print('Finished Cal')
 except KeyboardInterrupt as e:
     print("\n------------------\nEAT SYSTEM OFFLINE\n------------------")
-    GPIO.cleanup()
     sys.exit(0)
