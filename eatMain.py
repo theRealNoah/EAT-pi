@@ -130,6 +130,8 @@ rawDataPerSample = 10
 def pumpWater():
     global seqCounter, stepCounter, revs
     while seqCounter < 511 * revs:  # Number of sequences required for one revolution.
+        if seqCounter % 511 == 0:
+            print(seqCounter)
         for pin in range(0, 4):
             xpin = stepXPins[pin]
             ypin = stepYPins[-pin]
