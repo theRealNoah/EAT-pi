@@ -40,6 +40,8 @@ try:
     counter = 0
     oxygenRaw = []
     while(counter < 180):
+        if counter == 150:
+            print('Two Minutes Up')
         o2 = getOxygen()
         oxygenRaw.append(str(o2))
         print("oxygen concentration is %4.2f %%vol" % o2)
