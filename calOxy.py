@@ -23,7 +23,7 @@ oxygenRaw = []
 try:
     while(counter < 180):
         o2 = getOxygen()
-        oxygenRaw.append(o2)
+        oxygenRaw.append(str(o2))
         print("oxygen concentration is %4.2f %%vol" % o2)
         counter += 1
         time.sleep(1)
