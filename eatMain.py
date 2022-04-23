@@ -62,7 +62,7 @@ with open("eatLog.txt", "w+") as newFile:
     startTime = time.perf_counter()
 
 # Create file for error logging
-with open("/home/pi/errorLog.txt", "w+") as log:
+with open("/home/pi/EAT-pi/errorLog.txt", "w+") as log:
     log.write("EAT ERROR LOG:\n")
 
 # Set the naming convention for pins to use the numbers
@@ -75,8 +75,8 @@ sen0227 = SHT20(1, 0x40)
 
 # Set the GPIO Pin for powering lights 'SPI0 CEO0'
 growLights = 8
-isLightOn = False
 GPIO.setup(growLights, GPIO.OUT)
+isLightOn = False
 
 # Set input pins for Step Motor 28BYJ-48, inputPins = [IN1, IN2, IN3, IN4].
 # Motor X
@@ -214,6 +214,7 @@ def isPlantThirsty(humidity):
 
 
 def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
+    global isLightOn
     # Actuate the Lights if time is between 0-8hrs and Turn off lights between hours 8-24
     # If current time divided by 86400 remainder is less than 28800, turn ON.
     # i.e. Current time of the current day.
@@ -256,8 +257,7 @@ def avgRemoveOutlier(data):
 
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(timestamp):
-    print(str(isLightOn))
-    if ~isLightOn:
+    if not isLightOn:
         print('Force Light On')
         actuateGrowLights(timestamp, forceOn=True)
         time.sleep(3)
@@ -268,7 +268,7 @@ def captureImage(timestamp):
     print("\nSay cheese Little Gem!")
     subprocess.run(["libcamera-jpeg", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
-    if ~isLightOn:
+    if not isLightOn:
         print('Force Light Off')
         actuateGrowLights(timestamp, forceOff=True)
         time.sleep(3)
@@ -421,7 +421,7 @@ try:
         time.sleep(5)
 except KeyboardInterrupt as e:
     print("\n------------------\nEAT SYSTEM OFFLINE\n------------------")
-    with open("/home/pi/errorLog.txt", "a+") as log:
+    with open("/home/pi/EAT-pi/errorLog.txt", "a+") as log:
         log.write(str(e))
         log.write("\nEAT has encountered at time = " + str(sampleEndTime) + "\n")
     GPIO.cleanup()
