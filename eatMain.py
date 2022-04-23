@@ -75,7 +75,7 @@ sen0227 = SHT20(1, 0x40)
 
 # Set the GPIO Pin for powering lights 'SPI0 CEO0'
 growLights = 8
-isLightOn = True
+isLightOn = False
 GPIO.setup(growLights, GPIO.OUT)
 
 # Set input pins for Step Motor 28BYJ-48, inputPins = [IN1, IN2, IN3, IN4].
@@ -214,7 +214,6 @@ def isPlantThirsty(humidity):
 
 
 def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
-    global isLightOn
     # Actuate the Lights if time is between 0-8hrs and Turn off lights between hours 8-24
     # If current time divided by 86400 remainder is less than 28800, turn ON.
     # i.e. Current time of the current day.
@@ -231,10 +230,12 @@ def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
             # To turn on LED Power MOSFET Circuit.
             GPIO.output(growLights, GPIO.HIGH)
             isLightOn = True
+            print('Time turn on lights')
         else:
             # To turn off LED Power MOSFET Circuit.
             GPIO.output(growLights, GPIO.LOW)
             isLightOn = False
+            print('Time turn off lights')
 
 
 def avg(data):
