@@ -249,6 +249,7 @@ def avgRemoveOutlier(data):
 
     finalList = [x for x in data if (x > mean - 2 * sd)]
     finalList = [x for x in finalList if (x < mean + 2 * sd)]
+    weightedMean = mean
     if finalList:
         weightedMean = numpy.mean(finalList, axis=0)
     print('Normal Average ' + str(mean))
