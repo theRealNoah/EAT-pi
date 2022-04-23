@@ -22,13 +22,13 @@ oxygenRaw = []
 
 try:
     while(counter < 180):
-            o2 = getOxygen()
-            oxygenRaw.append(o2)
-            print("oxygen concentration is %4.2f %%vol" % o2)
-            counter += 1
-            time.sleep(1)
-    with open("o2Cal.txt", "a") as log:
-        log.write(",".join(oxygenRaw))
+        o2 = getOxygen()
+        oxygenRaw.append(o2)
+        print("oxygen concentration is %4.2f %%vol" % o2)
+        counter += 1
+        time.sleep(1)
+        with open("o2Cal.txt", "a") as log:
+            log.write(oxygenRaw)
 
 except KeyboardInterrupt as e:
     print("\n------------------\nEAT SYSTEM OFFLINE\n------------------")
