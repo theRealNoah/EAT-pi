@@ -227,7 +227,7 @@ def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
         GPIO.output(growLights, GPIO.LOW)
         isLightOn = False
     else:
-        if currentTime % 86400 < 28800:
+        if currentTime % 86400 > 28800:
             # To turn on LED Power MOSFET Circuit.
             GPIO.output(growLights, GPIO.HIGH)
             isLightOn = True
@@ -258,7 +258,6 @@ def avgRemoveOutlier(data):
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(timestamp):
     if not isLightOn:
-        print('Force Light On')
         actuateGrowLights(timestamp, forceOn=True)
         time.sleep(3)
     pwd = os.getcwd()
@@ -269,7 +268,6 @@ def captureImage(timestamp):
     subprocess.run(["libcamera-jpeg", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
     if not isLightOn:
-        print('Force Light Off')
         actuateGrowLights(timestamp, forceOff=True)
         time.sleep(3)
 
@@ -361,6 +359,7 @@ def uploadImages():
         # Read file and set it as the content of this instance.
         gfile.SetContentFile(upload)
         gfile.Upload()
+        print("Finished Upload of " + upload)
     os.chdir("..")  # Return to EAT-pi directory.
 
 def uploadPlots():
@@ -383,6 +382,7 @@ def uploadPlots():
         # Read file and set it as the content of this instance.
         gfile.SetContentFile(plot)
         gfile.Upload()
+        print("Finished Plot Upload")
     os.chdir("..")  # Return to EAT-pi directory.
 
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
