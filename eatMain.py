@@ -75,6 +75,7 @@ sen0227 = SHT20(1, 0x40)
 
 # Set the GPIO Pin for powering lights 'SPI0 CEO0'
 growLights = 8
+isLightOn = False
 GPIO.setup(growLights, GPIO.OUT)
 
 # Set input pins for Step Motor 28BYJ-48, inputPins = [IN1, IN2, IN3, IN4].
@@ -213,20 +214,27 @@ def isPlantThirsty(humidity):
 
 
 def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
+    global isLightOn
     # Actuate the Lights if time is between 0-8hrs and Turn off lights between hours 8-24
     # If current time divided by 86400 remainder is less than 28800, turn ON.
     # i.e. Current time of the current day.
     if forceOn:
+        print('forced on')
         GPIO.output(growLights, GPIO.HIGH)
+        isLightOn = True
     elif forceOff:
+        print('forced off')
         GPIO.output(growLights, GPIO.LOW)
+        isLightOn = False
     else:
         if currentTime % 86400 < 28800:
             # To turn on LED Power MOSFET Circuit.
             GPIO.output(growLights, GPIO.HIGH)
+            isLightOn = True
         else:
             # To turn off LED Power MOSFET Circuit.
             GPIO.output(growLights, GPIO.LOW)
+            isLightOn = False
 
 
 def avg(data):
@@ -246,7 +254,7 @@ def avgRemoveOutlier(data):
 
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(timestamp):
-    isLightOn = GPIO.input(growLights)
+    global isLightOn
     if ~isLightOn:
         print('Force Light On')
         actuateGrowLights(timestamp, forceOn=True)
@@ -334,21 +342,15 @@ def uploadImages():
         images.remove("google_creds.txt")
     images.sort(key=sortingImages)
     uploadFileList = images
-    print('Right before images')
     for upload in uploadFileList:
         str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
-        print('Before latest file')
-
         fileList = drive.ListFile({'q': str}).GetList()
-        print('Got Latest File')
         # Move Latest Photo to Archive
         if fileList:
             file = fileList[0]
             filename = file['title']
             file.GetContentFile(filename)
-            print('right before creation')
             gfile = drive.CreateFile({'parents': [{'id': archiveImageFolder}]})
-            print('right after creation')
             gfile.SetContentFile(filename)
             gfile.Upload()
             file.Trash()
@@ -357,7 +359,6 @@ def uploadImages():
         # Read file and set it as the content of this instance.
         gfile.SetContentFile(upload)
         gfile.Upload()
-        print('Finished Image Upload')
     os.chdir("..")  # Return to EAT-pi directory.
 
 def uploadPlots():
@@ -368,7 +369,6 @@ def uploadPlots():
     plotFiles = images
     if "google_creds.txt" in images:
         images.remove("google_creds.txt")
-    print('Right before plot')
     for plot in plotFiles:
         str = "\'" + plotFolder + "\'" + " in parents and trashed=false"
         fileList = drive.ListFile({'q': str}).GetList()
@@ -381,7 +381,6 @@ def uploadPlots():
         # Read file and set it as the content of this instance.
         gfile.SetContentFile(plot)
         gfile.Upload()
-        print('Finished Plot File Upload')
     os.chdir("..")  # Return to EAT-pi directory.
 
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
