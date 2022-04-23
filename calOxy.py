@@ -4,9 +4,15 @@ import sys
 
 GPIO.setmode(GPIO.BCM)
 
-# Create file for error logging
-with open("o2Cal.txt", "a") as log:
-    log.write("EAT Oxygen Sensor Calibration LOG:\n")
+# Create file for before cal
+with open("o2BeforeCal.txt", "w") as log:
+    log.write("EAT Oxygen Sensor Calibration BEFORE LOG:\n")
+
+
+# Create file for after cal
+with open("o2AfterCal.txt", "w") as log:
+    log.write("EAT Oxygen Sensor Calibration AFTER LOG:\n")
+
 
 # Function to check Little Gem root zone oxygen.
 def getOxygen():
