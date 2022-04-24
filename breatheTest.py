@@ -44,6 +44,8 @@ try:
         # humidityRaw.append((str(h)))
         # tempRaw.append((str(temp_f)))
         # print("oxygen concentration is %4.2f %%vol" % o2)
+        out = str(counter) + "," + str(o2) + "," + str(h) + "," + str(temp_f) + "\n"
+        print(out)
         with open("breatheTest.txt", "a") as log:
             log.write(str(counter) + "," + str(o2) + "," + str(h) + "," + str(temp_f) + "\n")
         counter += 1

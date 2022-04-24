@@ -20,13 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d782f82-39df-4437-998f-d2909a2dae10" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/breatheTest.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/parseLog.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eatMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/eatMain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/google_creds.txt" beforeDir="false" afterPath="$PROJECT_DIR$/google_creds.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/o2AfterCal2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/o2AfterCal2.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/o2BeforeCal2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/o2BeforeCal2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/breatheTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/breatheTest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,6 +83,10 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="372" y="84" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1650833014163">
+      <screen x="0" y="0" width="1280" height="672" />
+    </state>
+    <state x="372" y="84" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1280.672@0.0.1280.672" timestamp="1650833014163" />
     <state x="389" y="192" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1650641811050">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
