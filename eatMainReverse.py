@@ -107,7 +107,7 @@ stepCount = len(seq)
 stepDir = -2  # Set to 1 or 2 for clockwise, negative for counter-clockwise.
 stepCounter = 0
 seqCounter = 0
-revs = 5  # Edit the revolutions needed to deliver water.
+revs = 500  # Edit the revolutions needed to deliver water.
 
 # Setup raw data arrays and sample arrays.
 sampleStartTime = 0
