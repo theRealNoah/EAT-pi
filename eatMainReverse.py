@@ -104,7 +104,7 @@ seq = [
 ]
 
 stepCount = len(seq)
-stepDir = 2  # Set to 1 or 2 for clockwise, negative for counter-clockwise.
+stepDir = -2  # Set to 1 or 2 for clockwise, negative for counter-clockwise.
 stepCounter = 0
 seqCounter = 0
 revs = 5  # Edit the revolutions needed to deliver water.
