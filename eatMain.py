@@ -55,7 +55,7 @@ plotFolder = "1PXfi9Ked4a14cCu0gaI6VATY_K6fNgld"
 
 
 # Create file for data logging.
-fileHeaders = ["Time", "Temp (F)", "Humidity", "Oxygen", "CPU Temp"]
+fileHeaders = ["Time", "Temp (F)", "Humidity", "Oxygen", "CPU Temp,"]
 with open("eatLog.txt", "w+") as newFile:
     newFile.write(",".join(fileHeaders))
     # Begin a Timer
@@ -388,11 +388,14 @@ def uploadPlots():
         print("Finished Plot Upload")
     os.chdir("..")  # Return to EAT-pi directory.
 
+def uploadData():
+    print('Begin Upload Images')
+    uploadImages()
+    print('Begin Upload Plots')
+    uploadPlots()
+
 # While true loop to run program, use CTRL + C to exit and cleanup pins.
 try:
-    # TODO: Sensor Calibration
-    # Taking lots of data to normalize to a threshold
-
     while True:
         # Read raw values from sensors and save average to global data arrays
         sampleData()
@@ -416,10 +419,7 @@ try:
         sampleCounter += 1
         # Upload Data every a certain amount of samples
         if sampleCounter % 5 == 0:
-            print('Begin Upload Images')
-            uploadImages()
-            print('Begin Upload Plots')
-            uploadPlots()
+            uploadData()
         # Sleep between Sample Times
         time.sleep(5)
 except KeyboardInterrupt as e:
