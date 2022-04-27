@@ -268,7 +268,7 @@ def captureImage(timestamp):
         os.mkdir(pwd + "/Images")
     os.chdir(pwd + "/Images")
     print("\nSay cheese Little Gem!")
-    subprocess.run(["libcamera-jpeg", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
+    subprocess.run(["libcamera-jpeg", "rotation", "180", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
     if not isLightOn:
         actuateGrowLights(timestamp, forceOff=True)
