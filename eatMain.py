@@ -73,7 +73,7 @@ if fileList:
         file.Trash()
 
 # Create file for data logging.
-fileHeaders = ["Time", "Temp (F)", "Humidity", "Oxygen", "CPU Temp,"]
+fileHeaders = ["Time", "Temp (F)", "Humidity", "Oxygen", "CPU Temp\n"]
 with open("eatLog.txt", "w+") as newFile:
     newFile.write(",".join(fileHeaders))
     # Begin a Timer
@@ -361,10 +361,7 @@ def uploadImages():
         images.remove("google_creds.txt")
     images.sort(key=sortingImages)
     uploadFileList = images
-    print(uploadFileList)
     for upload in uploadFileList:
-        print(os.getcwd())
-        os.remove(upload)
         str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
         fileList = drive.ListFile({'q': str}).GetList()
         # Move Latest Photo to Archive
@@ -382,9 +379,10 @@ def uploadImages():
         gfile.SetContentFile(upload)
         gfile.Upload()
         print("Finished Upload of " + upload)
-
-    print(os.listdir())
-    os.chdir("..")  # Return to EAT-pi directory.
+    for upload in uploadFileList:
+        os.remove(upload)
+    # Return to EAT-pi directory.
+    os.chdir("..")
 
 def uploadPlots():
     # Populate plotFiles with the plots that need to be uploaded
