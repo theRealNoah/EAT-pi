@@ -367,6 +367,7 @@ def uploadImages():
         images.remove("google_creds.txt")
     images.sort(key=sortingImages)
     uploadFileList = images
+    print(uploadFileList)
     for upload in uploadFileList:
         str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
         fileList = drive.ListFile({'q': str}).GetList()
@@ -386,6 +387,7 @@ def uploadImages():
         gfile.Upload()
         print("Finished Upload of " + upload)
         os.remove(upload)
+    print(os.listdir())
     os.chdir("..")  # Return to EAT-pi directory.
 
 def uploadPlots():
