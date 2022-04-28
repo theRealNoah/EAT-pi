@@ -54,20 +54,20 @@ archiveImageFolder = "1UBtqvBXPVuEiwwb6G7ogHJ5iie4RP3Nv"
 plotFolder = "1PXfi9Ked4a14cCu0gaI6VATY_K6fNgld"
 
 # Remove Current Images
-str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
-fileList = drive.ListFile({'q': str}).GetList()
+path = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
+fileList = drive.ListFile({'q': path}).GetList()
 if fileList:
     for file in fileList:
         file.Trash()
 
-str = "\'" + archiveImageFolder + "\'" + " in parents and trashed=false"
-fileList = drive.ListFile({'q': str}).GetList()
+path = "\'" + archiveImageFolder + "\'" + " in parents and trashed=false"
+fileList = drive.ListFile({'q': path}).GetList()
 if fileList:
     for file in fileList:
         file.Trash()
 
-str = "\'" + plotFolder + "\'" + " in parents and trashed=false"
-fileList = drive.ListFile({'q': str}).GetList()
+path = "\'" + plotFolder + "\'" + " in parents and trashed=false"
+fileList = drive.ListFile({'q': path}).GetList()
 if fileList:
     for file in fileList:
         file.Trash()
