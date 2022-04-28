@@ -104,10 +104,10 @@ seq = [
 ]
 
 stepCount = len(seq)
-stepDir = 2  # Set to 1 or 2 for clockwise, negative for counter-clockwise.
+stepDir = -2  # Set to 1 or 2 for clockwise, negative for counter-clockwise.
 stepCounter = 0
 seqCounter = 0
-revs = 500  # Edit the revolutions needed to deliver water.
+revs = 30  # Edit the revolutions needed to deliver water.
 
 # Setup raw data arrays and sample arrays.
 sampleStartTime = 0
@@ -130,8 +130,8 @@ rawDataPerSample = 10
 def pumpWater():
     global seqCounter, stepCounter, revs
     while seqCounter < 511 * revs:  # Number of sequences required for one revolution.
-        if seqCounter % 511 == 0:
-            print('Rev: ', seqCounter)
+        # if seqCounter % 511 == 0:
+            # print('Rev: ', seqCounter)
         for pin in range(0, 4):
             xpin = stepXPins[pin]
             ypin = stepYPins[-pin]
@@ -206,7 +206,7 @@ def sampleData():
 # Data analysis to determine if the plant needs watering.
 def isPlantThirsty(humidity):
     # TODO: determine sampling of data and determine when the plant should actually need water
-    threshold = 100  # update this
+    threshold = 50  # update this
     if humidity < threshold:
         print("\nLittle Gem is thirsty, now watering!")
         return True
@@ -268,7 +268,7 @@ def captureImage(timestamp):
         os.mkdir(pwd + "/Images")
     os.chdir(pwd + "/Images")
     print("\nSay cheese Little Gem!")
-    subprocess.run(["libcamera-jpeg", "rotation", "180", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
+    subprocess.run(["libcamera-jpeg", "--rotation", "180", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
     if not isLightOn:
         actuateGrowLights(timestamp, forceOff=True)
@@ -363,6 +363,7 @@ def uploadImages():
         gfile.SetContentFile(upload)
         gfile.Upload()
         print("Finished Upload of " + upload)
+        os.remove(upload)
     os.chdir("..")  # Return to EAT-pi directory.
 
 def uploadPlots():
@@ -386,6 +387,7 @@ def uploadPlots():
         gfile.SetContentFile(plot)
         gfile.Upload()
         print("Finished Plot Upload")
+        os.remove(plot)
     os.chdir("..")  # Return to EAT-pi directory.
 
 def uploadData():
