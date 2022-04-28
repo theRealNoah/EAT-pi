@@ -297,22 +297,26 @@ def plotData():
     axs[0].plot(elapsedTimes, temperatureSamples, **next(color_cycle))
     axs[0].set_ylabel('F'+degree_sign)
     axs[0].set_title('Root Temperature', fontsize='x-small')
+    axs[0].ticklabel_format(useOffset=False, style='plain')
 
     # CPU Temperature vs. Elapsed Time
     axs[1].plot(elapsedTimes, cpuTempSamples, **next(color_cycle))
     axs[1].set_ylabel('F'+degree_sign)
     axs[1].set_title('CPU Temperature', fontsize='x-small')
+    axs[1].ticklabel_format(useOffset=False, style='plain')
 
     # Relative Humidity vs. Elapsed Time
     axs[2].plot(elapsedTimes, humiditySamples, **next(color_cycle))
     axs[2].set_ylabel('%')
     axs[2].set_title('Relative Humidity', fontsize='x-small')
+    axs[2].ticklabel_format(useOffset=False, style='plain')
 
     # Oxygen vs. Elapsed Time
     axs[3].plot(elapsedTimes, oxygenSamples,  **next(color_cycle))
     axs[3].set_ylabel('%')
     axs[3].set_title('Oxygen Concentration', fontsize='x-small')
     axs[3].set_xlabel('Elapsed Time (s)', fontsize='x-small')
+    axs[3].ticklabel_format(useOffset=False, style='plain')
 
     # handles, labels = axs[3].get_legend_handles_labels()
     # fig.legend(handles, labels, loc='upper center')
