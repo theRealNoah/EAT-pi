@@ -370,7 +370,6 @@ def uploadImages():
     print(uploadFileList)
     for upload in uploadFileList:
         print(os.getcwd())
-        os.remove(upload)
         str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
         fileList = drive.ListFile({'q': str}).GetList()
         # Move Latest Photo to Archive
@@ -388,6 +387,8 @@ def uploadImages():
         gfile.SetContentFile(upload)
         gfile.Upload()
         print("Finished Upload of " + upload)
+    for upload in uploadFileList:
+        os.remove(upload)
 
     print(os.listdir())
     os.chdir("..")  # Return to EAT-pi directory.
