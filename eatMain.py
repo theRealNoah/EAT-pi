@@ -367,9 +367,7 @@ def uploadImages():
         images.remove("google_creds.txt")
     images.sort(key=sortingImages)
     uploadFileList = images
-    print(uploadFileList)
     for upload in uploadFileList:
-        print(os.getcwd())
         str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
         fileList = drive.ListFile({'q': str}).GetList()
         # Move Latest Photo to Archive
@@ -389,9 +387,8 @@ def uploadImages():
         print("Finished Upload of " + upload)
     for upload in uploadFileList:
         os.remove(upload)
-
-    print(os.listdir())
-    os.chdir("..")  # Return to EAT-pi directory.
+    # Return to EAT-pi directory.
+    os.chdir("..")
 
 def uploadPlots():
     # Populate plotFiles with the plots that need to be uploaded
