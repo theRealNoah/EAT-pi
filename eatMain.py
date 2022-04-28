@@ -369,6 +369,7 @@ def uploadImages():
     uploadFileList = images
     print(uploadFileList)
     for upload in uploadFileList:
+        print(os.getcwd())
         os.remove(upload)
         str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
         fileList = drive.ListFile({'q': str}).GetList()
