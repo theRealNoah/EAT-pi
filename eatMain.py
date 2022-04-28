@@ -73,7 +73,7 @@ if fileList:
         file.Trash()
 
 # Create file for data logging.
-fileHeaders = ["Time", "Temp (F)", "Humidity", "Oxygen", "CPU Temp,"]
+fileHeaders = ["Time", "Temp (F)", "Humidity", "Oxygen", "CPU Temp\n"]
 with open("eatLog.txt", "w+") as newFile:
     newFile.write(",".join(fileHeaders))
     # Begin a Timer
