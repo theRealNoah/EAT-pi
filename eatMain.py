@@ -53,6 +53,24 @@ latestImageFolder = "1cmch7qs3WFkpS8GLzCbclByMP7uN3_dq"
 archiveImageFolder = "1UBtqvBXPVuEiwwb6G7ogHJ5iie4RP3Nv"
 plotFolder = "1PXfi9Ked4a14cCu0gaI6VATY_K6fNgld"
 
+# Remove Current Images
+str = "\'" + latestImageFolder + "\'" + " in parents and trashed=false"
+fileList = drive.ListFile({'q': str}).GetList()
+if fileList:
+    for file in fileList:
+        file.Trash()
+
+str = "\'" + archiveImageFolder + "\'" + " in parents and trashed=false"
+fileList = drive.ListFile({'q': str}).GetList()
+if fileList:
+    for file in fileList:
+        file.Trash()
+
+str = "\'" + plotFolder + "\'" + " in parents and trashed=false"
+fileList = drive.ListFile({'q': str}).GetList()
+if fileList:
+    for file in fileList:
+        file.Trash()
 
 # Create file for data logging.
 fileHeaders = ["Time", "Temp (F)", "Humidity", "Oxygen", "CPU Temp,"]
