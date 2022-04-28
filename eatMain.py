@@ -242,7 +242,7 @@ def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
 
 
 def avg(data):
-    return sum(data) / len(data)
+    return "{:.2f}".format(sum(data) / len(data))
 
 def avgRemoveOutlier(data):
     elements = numpy.array(data)
@@ -256,7 +256,7 @@ def avgRemoveOutlier(data):
         weightedMean = numpy.mean(finalList, axis=0)
     print('Normal Average ' + str(mean))
     print('Average Minus Outliers ' + str(weightedMean))
-    return weightedMean
+    return "{:.2f}".format(weightedMean)
 
 # Function to capture image using Raspberry Pi Camera.
 def captureImage(timestamp):
@@ -283,7 +283,7 @@ def writeLog():
             str(oxygenSamples[-1]),
             str(cpuTempSamples[-1]),
         ]
-        log.write(",".join(dataOut))
+        log.write(",".join(dataOut) + ",\n")
         print(dataOut)
 
 def plotData():
