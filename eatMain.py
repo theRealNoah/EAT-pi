@@ -272,8 +272,6 @@ def avgRemoveOutlier(data):
     weightedMean = mean
     if finalList:
         weightedMean = numpy.mean(finalList, axis=0)
-    print('Normal Average ' + str(mean))
-    print('Average Minus Outliers ' + str(weightedMean))
     return round(weightedMean, 2)
 
 # Function to capture image using Raspberry Pi Camera.
@@ -432,7 +430,7 @@ try:
         actuateGrowLights(sampleEndTime)
 
         # Pass the latest sample to the decision making function.
-        if isPlantThirsty(humiditySamples[-1]):
+        if isPlantThirsty(humiditySamples[-1]) and sampleCounter < 1:
             pumpWater()
 
         # Take image of the pi
