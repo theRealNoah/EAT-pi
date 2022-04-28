@@ -193,7 +193,7 @@ def sampleData():
         temperatureRaw.append(temp[1])  # Access Second Element of Temperature Tuple to read Fahrenheit
         oxygenRaw.append(o2)
         cpuTempRaw.append(cpuTemp)
-    sampleEndTime = time.perf_counter() - startTime
+    sampleEndTime = round(time.perf_counter() - startTime,2)
     elapsedTimes.append(sampleEndTime)
 
     # Append the average of the latest samples to new arrays
