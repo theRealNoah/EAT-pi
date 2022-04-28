@@ -239,11 +239,9 @@ def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
     # If current time divided by 86400 remainder is less than 28800, turn ON.
     # i.e. Current time of the current day.
     if forceOn:
-        print('forced on')
         GPIO.output(growLights, GPIO.HIGH)
         isLightOn = True
     elif forceOff:
-        print('forced off')
         GPIO.output(growLights, GPIO.LOW)
         isLightOn = False
     else:
@@ -251,12 +249,10 @@ def actuateGrowLights(currentTime, forceOn=False, forceOff=False):
             # To turn on LED Power MOSFET Circuit.
             GPIO.output(growLights, GPIO.HIGH)
             isLightOn = True
-            print('Time turn on lights')
         else:
             # To turn off LED Power MOSFET Circuit.
             GPIO.output(growLights, GPIO.LOW)
             isLightOn = False
-            print('Time turn off lights')
 
 
 def avg(data):
@@ -283,7 +279,7 @@ def captureImage(timestamp):
     if not os.path.exists(pwd + "/Images"):  # Create directory for image storage.
         os.mkdir(pwd + "/Images")
     os.chdir(pwd + "/Images")
-    print("\nSay cheese Little Gem!")
+    print("\nSay cheese Little Gem!\n")
     subprocess.run(["libcamera-jpeg", "--rotation", "180", "-n", "-o", str(timestamp) + ".jpeg"])  # Capture image.
     os.chdir("..")  # Return to EAT-pi directory.
     if not isLightOn:
