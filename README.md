@@ -89,27 +89,27 @@ Hint: You'll need to create the `settings.yml` file and download the `client_sec
 
 ## File Breakdown
 
-- `breatheTest.py`
+- [`breatheTest.py`](breatheTest.py)
   - Used for an experiment of the temperature/humidity sensor and oxygen sensor
-- `breatheTest.txt`
+- [`breatheTest.txt`](breatheTest.txt)
   - Results of the Breathe Test
-- `calOxy.py`
+- [`calOxy.py`](calOxy.py)
   - Used to calibrate the oxgyen sensor for it's very first time use, corrects the baseline per manufacturer specification
-- `DF_Oxygen.py`
+- [`DF_Oxygen.py`](DF_Oxygen.py)
   - Local File used to fetch oxygen data in the code from the manufacturer
-- `eatMain.py`
+- [`eatMain.py`](eatMain.py)
   - Main Script for operating the EAT System
-- `eatMainReverse.py`
+- [`eatMainReverse.py`](eatMainReverse.py)
   - Copy of Main Script for operating the EAT system pump in Reverse
-- `eatSetup.py`
+- [`eatSetup.py`](eatSetup.py)
   - Setup Script for initial turn-on of the EAT systme
-- `motor_test.py`
+- [`motor_test.py`](motor_test.py)
   - Testing the Stepper Motors
-- `parseLog.py`
+- [`parseLog.py`](parseLog.py)
   - Script for exporting TXT file to CSV for plotting in MATLAB from O2 Calibration
-- `testKill.py`
+- [`testKill.py`](testKill.py)
   - Script for testing Software Shutdown of Raspberry Pi
-- `upload_log.py`
+- [`upload_log.py`](upload_log.py)
   - Script to test uploading files to Google Drive
 
 ---
