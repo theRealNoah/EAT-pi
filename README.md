@@ -36,16 +36,16 @@ This project requires two main programs to be run in order for the EAT System to
 
 Assuming the Raspberry Pi Zero 2 is already configured following the document "Pi Connections" found in the SharePoint.
 
-
-### __Dependencies__ 
+### **Dependencies**
 
 The following packages and files are dependencies for `eatMain.py`
 
+**Local File**
 
-__Local File__
 - DF_Oxygen.py is a local library file that must be in the same directory
 
-__Packages__
+**Packages**
+
 - sensor https://github.com/nickoala/sensor
 - RPi.GPIO https://pypi.org/project/RPi.GPIO/
 - matplotlib https://matplotlib.org/stable/index.html
@@ -70,8 +70,48 @@ Run the following setup script to install necessary packages and cleanup the GPI
 ```
 python eatSetup.py
 ```
+
 To operate EAT normally run:
 
 ```
 python eatMain.py
 ```
+
+Notes:
+This project uploads images and plots to Google Drive, you will need to re-download the client-secrets from the Project's Google Account before rerunning this code.
+
+Following this page for Authentication:
+https://www.projectpro.io/recipes/upload-files-to-google-drive-using-python
+
+Hint: You'll need to create the `settings.yml` file and download the `client_secrets.json` file
+
+---
+
+## File Breakdown
+
+- `breatheTest.py`
+  - Used for an experiment of the temperature/humidity sensor and oxygen sensor
+- `calOxy.py`
+  - Used to calibrate the oxgyen sensor for it's very first time use, corrects the baseline per manufacturer specification
+- `DF_Oxygen.py`
+  - Local File used to fetch oxygen data in the code from the manufacturer
+- `eatMain.py`
+  - Main Script for operating the EAT System
+- `eatMainReverse.py`
+  - Copy of Main Script for operating the EAT system pump in Reverse
+- `eatSetup.py`
+  - Setup Script for initial turn-on of the EAT systme
+- `motor_test.py`
+  - Testing the Stepper Motors
+- `parseLog.py`
+  - Script for exporting TXT file to CSV for plotting in MATLAB from O2 Calibration
+- `testKill.py`
+  - Script for testing Software Shutdown of Raspberry Pi
+- `upload_log.py`
+  - Script to test uploading files to Google Drive
+
+---
+
+For questions or concerns on information found in this repository contact Noah Hamilton at consultnoahhamilton@gmail.com
+
+---
